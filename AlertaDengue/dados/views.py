@@ -23,13 +23,7 @@ from gis.geotiff import convert_from_shapefile
 # local
 from . import dbdata
 from . import models as M
-from .charts import (
-    Dash_Epy,
-    DashCharts,
-    HomeCharts,
-    ReportCityCharts,
-    ReportStateCharts,
-)
+from .charts import DashCharts, HomeCharts, ReportCityCharts, ReportStateCharts
 from .dbdata import (
     ALERT_COLOR,
     CID10,
@@ -886,7 +880,6 @@ class AlertaStateView(TemplateView):
                 'disease_label': context['disease'].title(),
                 'last_update': last_update,
                 'dash_chart_uf': DashCharts.create_dash_chart_uf(),
-                'dash_epy_uf': Dash_Epy.create_dash_epyweek_uf(),
             }
         )
         return context

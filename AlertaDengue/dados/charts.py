@@ -1,4 +1,8 @@
+import json
+import os
 from datetime import timedelta
+
+# from glob import glob
 from time import mktime
 
 import dash
@@ -6,11 +10,12 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import plotly.graph_objs as go
+from django.conf import settings
 from django_plotly_dash import DjangoDash
 from plotly.subplots import make_subplots
 
 # local
-from .dbdata import get_series_by_UF
+from .dbdata import NotificationResume, get_series_by_UF
 
 
 class ReportCityCharts:
@@ -601,7 +606,7 @@ class HomeCharts:
             fig.update_yaxes(
                 title_text="Pessoas",
                 secondary_y=True,
-                showline=True,
+                showline=False,
                 showgrid=True,
                 showticklabels=True,
                 linecolor='rgb(204, 204, 204)',
@@ -638,31 +643,49 @@ class DashCharts:
             'chart_type=disease&diseases=Dengue&state_abv=CE'
         )
 
-        todas_options = {
-            'disease': ['Chikungunya', 'Dengue', 'Zika'],
-            'Gênero': [u'Homens', 'Mulheres'],
+        all_options = {
+            'Disease': ['Chikungunya', u'Dengue', 'Zika'],
+            'Gender': ['Homens', u'Mulheres'],
         }
 
         data_gender = {
-            'Homens': {'x': df_diseases.category, 'y': df_gender.Homem},
-            'Mulheres': {'x': df_diseases.category, 'y': df_gender.Mulher},
+            'Homens': {
+                'x': df_diseases.category,
+                'type': 'bar',
+                'marker': {'color': "red"},
+                'y': df_gender.Homem,
+            },
+            'Mulheres': {
+                'x': df_diseases.category,
+                'type': 'bar',
+                'marker': {'color': "blue"},
+                'y': df_gender.Mulher,
+            },
         }
 
         data_age = {
-            'Homens': go.Scatter(
-                x=df_gender.category, y=df_gender.Homem, name='Homem'
-            ),
-            'Mulheres': go.Scatter(
-                x=df_gender.category, y=df_gender.Mulher, name='Mulher'
-            ),
+            'Homens': {
+                'x': df_gender.category,
+                'y': df_gender.Homem,
+                'type': 'bar',
+                'marker': {'color': "red"},
+                'name': 'Homem',
+            },
+            'Mulheres': {
+                'x': df_gender.category,
+                'y': df_gender.Mulher,
+                'type': 'bar',
+                'marker': {'color': "blue"},
+                'name': 'Mulher',
+            },
         }
 
-        # Start App
-
+        # external CSS stylesheets
         external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
+        # Start App
         app = DjangoDash(
-            'dash_app_state', external_stylesheets=external_stylesheets
+            'dash_app_disease', external_stylesheets=external_stylesheets
         )
 
         app.layout = html.Div(
@@ -670,83 +693,83 @@ class DashCharts:
                 [
                     html.Div(
                         [
-                            html.Div(
-                                [
-                                    html.P('Escolha uma doença:'),
-                                    dcc.Checklist(
-                                        id='Disease',
-                                        value=['Homens'],
-                                        labelStyle={'display': 'inline-block'},
-                                    ),
-                                ],
-                                className="six columns",
+                            html.P('Selecione o filtro:'),
+                            dcc.Checklist(
+                                id='Disease',
+                                value=['Homens'],
+                                style={
+                                    'borderBottom': 'thin lightgrey solid',
+                                    'backgroundColor': 'rgb(250, 250, 250)',
+                                    'padding': '0px 0px',
+                                },
+                                labelStyle={'display': 'inline-block'},
                             ),
-                            html.Div(
-                                [
-                                    html.P('Escolha um Gênero:'),
-                                    dcc.RadioItems(
-                                        id='Gender',
-                                        options=[
-                                            {'label': k, 'value': k}
-                                            for k in todas_options.keys()
-                                        ],
-                                        value='TDA',
-                                        labelStyle={'display': 'inline-block'},
-                                    ),
+                        ],
+                        className='six columns',
+                    ),
+                    html.Div(
+                        [
+                            dcc.RadioItems(
+                                id='Gender',
+                                options=[
+                                    {'label': k, 'value': k}
+                                    for k in all_options.keys()
                                 ],
-                                className="six columns",
-                            ),
-                        ]
+                                value='All',
+                                # labelStyle={'displa': 'inline-block'},
+                                style={
+                                    'borderBottom': 'thin lightgrey solid',
+                                    'backgroundColor': 'rgb(250, 250, 250)',
+                                    'padding': '5px 0px',
+                                },
+                                labelStyle={'display': 'inline-block'},
+                            )
+                        ],
+                        className="row",
                     ),
                     html.Div(
                         [
                             html.Div(
                                 [
-                                    html.H3('Column 2'),
                                     dcc.Graph(
                                         id='graph-gender',
                                         style={
+                                            'padding': '0px 0px 0px 0px',
                                             "height": "300px",
                                             "width": "100%",
                                         },
-                                    ),
-                                ],
-                                className="six columns",
+                                    )
+                                ]
                             )
-                        ]
+                        ],
+                        className='six columns',
                     ),
                     html.Div(
                         [
-                            html.Div(
-                                [
-                                    html.H3('Column 3'),
-                                    dcc.Graph(
-                                        id='graph-age',
-                                        style={
-                                            "height": "300px",
-                                            "width": "100%",
-                                        },
-                                    ),
-                                ],
-                                className="six columns",
+                            dcc.Graph(
+                                id='graph-age',
+                                style={
+                                    'padding': '0px 0px 0px 0px',
+                                    "height": "300px",
+                                    "width": "100%",
+                                },
                             )
                         ],
                         className="six columns",
                     ),
                 ],
                 className="row",
-            ),
-            className='graph-app',
+            )
         )
 
         @app.callback(
             dash.dependencies.Output('Disease', 'options'),
             [dash.dependencies.Input('Gender', 'value')],
+            # [dash.dependencies.Input('Gender', 'value')],
         )
-        def set_disease_options(selected_Gender):
+        def set_gender_options(selected_gender):
             return [
-                {'label': i, 'value': i}
-                for i in todas_options[selected_Gender]
+                {'label': i, 'value': i} for i in all_options[selected_gender]
             ]
 
         @app.callback(
@@ -767,10 +790,10 @@ class DashCharts:
             figure = {
                 'data': data,
                 "layout": go.Layout(
-                    title="Distribuição por Gênero",
+                    showlegend=True,
                     yaxis={"title": "Casos"},
-                    xaxis={"title": "Disease", "tickangle": 0},
-                    margin={'l': 55, 'b': 70, 't': 50, 'r': 5},
+                    xaxis={"title": "Distribuição por Gênero", "tickangle": 0},
+                    # margin={'l': 555, 'b': 70, 't': 50, 'r': 5},
                     font=dict(family='sans-serif', size=12, color='#000'),
                 ),
             }
@@ -794,14 +817,15 @@ class DashCharts:
             figure = {
                 'data': data,
                 "layout": go.Layout(
-                    title="Distribuição por Idade",
+                    showlegend=False,
                     yaxis={"title": "Casos"},
-                    xaxis={"title": "Idade", "tickangle": 45},
+                    xaxis={"title": "Distribuição por Idade", "tickangle": 45},
                     barmode='stack',
-                    # margin={'l': 55, 'b': 70, 't': 50, 'r': 5},
+                    # margin={'l': 275, 'b': 70, 't': 5, 'r': 275},
                     font=dict(family='sans-serif', size=12, color='#000'),
                 ),
             }
+
             return figure
 
         df_epyears = pd.read_csv(
@@ -853,13 +877,14 @@ class DashCharts:
 
         # app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-        app = DjangoDash('app_epy', external_stylesheets=external_stylesheets)
+        app = DjangoDash(
+            'dash_app_epyears', external_stylesheets=external_stylesheets
+        )
 
         app.layout = html.Div(
-            style={'height': '400px'},
             children=[
-                html.H3('Column 4'),
                 dcc.Graph(
+                    style={"height": "400px", "width": "100%"},
                     id='graph_epy',
                     figure={
                         'data': [
@@ -875,45 +900,109 @@ class DashCharts:
                             trace9,
                         ],
                         "layout": go.Layout(
-                            title="Casos por semanas epidemiologicas",
-                            yaxis={"title": "Casos"},
-                            xaxis={"title": "Semana"},
-                            showlegend=False,
-                            # margin={'l': 35, 'b': 70, 't': 50, 'r': 5},
-                            font=dict(
-                                family='sans-serif', size=12, color='#000'
-                            ),
+                            dict(
+                                title="Casos por semanas epidemiologicas",
+                                yaxis={"title": "Casos"},
+                                xaxis=dict(
+                                    rangeselector=dict(
+                                        buttons=list([dict(step='all')])
+                                    ),
+                                    rangeslider=dict(),
+                                    type='date',
+                                ),
+                                showlegend=False,
+                            )
                         ),
                     },
-                    style={'height': 'inherit'},
-                ),
-            ],
+                )
+            ]
         )
 
         # return figure
 
+        # CHAMA OS PARAMETROS DE NOTIF
+        notif = NotificationResume()
+        # notif.__dir__()
 
-class Dash_Epy:
-    @classmethod
-    def create_dash_epyweek_uf(cls):
-        df = pd.read_csv(
-            '/home/esloch//work_lab/projects_lab/'
-            'Datas_Sicence_dados/2011_us_ag_exports.csv'
+        ###
+        df_rj = notif.get_cities_alert_by_state(
+            state_name='Rio de Janeiro', disease='dengue', epi_year_week=201805
+        )
+        df_rj.municipio_geocodigo = df_rj.municipio_geocodigo.apply(str)
+
+        ###
+        # FAZ A BUSCA DE TODOS OS JSONS DISPONIVEIS
+
+        geojson_rj_path = os.path.join(
+            settings.STATIC_ROOT, 'geojson_simplified', 'RJ.json'
         )
 
-        fig = go.Figure(
-            data=go.Choropleth(
-                locations=df['code'],  # Spatial coordinates
-                z=df['total exports'].astype(float),  # Data to be color-coded
-                locationmode='USA-states',  # set of locations
-                colorscale='hot',
-                colorbar_title="Nivel de Alerta",
-            )
+        with open(geojson_rj_path, 'r') as f:
+            geojson_rj = json.load(f)
+
+        # CARREGA OS DADOS DE PROPERTIES PARA AS VARIAVEIS EM STRING
+
+        for features in geojson_rj['features']:
+            data_pop = str(features['properties']['populacao'])
+
+        for features in geojson_rj['features']:
+            data_nome = str(features['properties']['nome'])
+
+        # TRATA OS DADOS PARA APRESENTAÇAO LAYOUT
+        data_text = "{} : {} Habitantes.".format(data_nome, data_pop)
+        colors = [
+            'rgb(0,255,0)',
+            'rgb(255,255,0)',
+            'rgb(255,128,0)',
+            'rgb(255,0,0)',
+        ]
+        legend_alert = {
+            6: 'Alerta Verde',
+            7: 'Alerta Amarelo',
+            8: 'Alerta Laranja',
+            9: 'Alerta Vermelho',
+        }
+
+        app = DjangoDash('dash_choropleth')
+
+        for i in range(6, 10)[::-1]:
+            data = [
+                go.Choroplethmapbox(
+                    geojson=geojson_rj,
+                    locations=df_rj.municipio_geocodigo,
+                    z=df_rj.level_alert,
+                    text=data_text,
+                    hoverinfo="text",
+                    colorscale=colors,
+                    marker_opacity=0.5,
+                    autocolorscale=False,
+                    showscale=True,
+                    name=legend_alert[i],
+                )
+            ]
+
+        layout = go.Layout(
+            mapbox_pitch=45,
+            mapbox_style="carto-positron",
+            mapbox_zoom=6.5,
+            mapbox_center={"lat": -22.476, "lon": -43.127},
+            title=go.layout.Title(text='Mapa Estado Rio de Janeiro'),
         )
 
-        fig.update_layout(
-            title_text='Brasil Alerta Dengue by State',
-            geo_scope='usa',  # limite map scope to USA
+        fig = dict(data=data, layout=layout)
+
+        app.layout = html.Div(
+            children=[
+                dcc.Graph(
+                    style={
+                        'padding': '0px 20px 0px 0px',
+                        "height": "100%",
+                        "width": "100%",
+                    },
+                    id='example-graph',
+                    figure={'data': data, 'layout': layout},
+                )
+            ]
         )
 
-        return fig.to_html
+        return fig

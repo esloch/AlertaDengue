@@ -70,8 +70,11 @@ class Command(BaseCommand):
         :param geocode:
         :return:
         """
+        geojson_simplified_dir_path = os.path.join(
+            f_path, 'geojson_simplified'
+        )
         geojson_simplified_path = os.path.join(
-            f_path, 'geojson_simplified', '%s.json' % geocode
+            geojson_simplified_dir_path, '%s.json' % geocode
         )
         geojson_original_path = os.path.join(
             f_path, 'geojson', '%s.json' % geocode
@@ -81,17 +84,28 @@ class Command(BaseCommand):
         os.makedirs(geojson_dir_path, exist_ok=True)
 
         # creates the shapefile
-        with fiona.open(geojson_original_path, 'r') as shp:
-            multipolygon = MultiPolygon(
-                [shape(pol['geometry']) for pol in shp]
-            )
+        with open(geojson_original_path, 'r') as f:
+            geojson_data = json.load(f)
+            if geojson_data['type'] == 'FeatureCollection':
+                features = geojson_data['features']
+                features_union = features[0]['geometry']
+                features = features[1:]
+                for feature in features:
+                    if feature['geometry']['type'] == 'Polygon':
+                        features_union = feature['geometry']
+                multipolygon = shape(features_union)
+            else:
+                with fiona.open(geojson_original_path, 'r') as shp:
+                    multipolygon = MultiPolygon(
+                        [shape(pol['geometry']) for pol in shp]
+                    )
             shp_min = multipolygon.simplify(0.005)
             with open(geojson_simplified_path, 'w') as f:
                 geojson_geometry = shapely.geometry.mapping(shp_min)
                 geojson_content = {
                     'type': 'Feature',
                     'id': str(geocode),
-                    'properties': shp[0]['properties'],
+                    'properties': geojson_data['features'][0]['properties'],
                     'geometry': geojson_geometry,
                 }
                 json.dump(geojson_content, f)
@@ -183,8 +197,8 @@ class Command(BaseCommand):
         geo_info = {}
 
         for geocode in geocodes:
-            # self.create_geojson(f_geojson_path, geocode)
-            # self.create_shapefile(path_root, geocode)
+            self.create_geojson(f_geojson_path, geocode)
+            self.create_shapefile(path_root, geocode)
             self.simplify_geojson(path_root, geocode)
             geo_info.update(self.extract_geo_info_table(path_root, geocode))
 

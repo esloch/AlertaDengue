@@ -1,8 +1,8 @@
 # coding=utf-8
-from django.conf.urls import include, url
-from django.contrib import admin
 from django.conf import settings
+from django.conf.urls import include, url
 from django.conf.urls.static import static
+from django.contrib import admin
 from django.views.generic import RedirectView
 
 admin.autodiscover()
@@ -21,5 +21,5 @@ urlpatterns = [
     url_admin,
     url(r'^dbf/', include('dbf.urls')),
     url(r'^api/', include('api.urls')),
-    url('^django_plotly_dash/', include('django_plotly_dash.urls')),
+    url(r'^django_plotly_dash/', include('django_plotly_dash.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

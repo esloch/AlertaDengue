@@ -54,7 +54,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'leaflet',
-    'bootstrap4',
     'chunked_upload',
     'dados',
     'gis',
@@ -63,11 +62,12 @@ INSTALLED_APPS = (
     'api',
     'manager.router',
     'django_plotly_dash.apps.DjangoPlotlyDashConfig',
-    'werkzeug_debugger_runserver',
+    'dpd_static_support',
+    'bootstrap4',
 )
 
 if DEBUG:
-    INSTALLED_APPS += ('django_extensions',)
+    INSTALLED_APPS += ('django_extensions', 'werkzeug_debugger_runserver')
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.gzip.GZipMiddleware',
@@ -79,6 +79,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_plotly_dash.middleware.BaseMiddleware',
+    'django_plotly_dash.middleware.ExternalRedirectionMiddleware',
 )
 
 # django 2
@@ -297,4 +298,36 @@ LOGGING = {
             'propagate': False,
         }
     },
+}
+
+# Staticfiles finders for locating dash app assets and related files
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django_plotly_dash.finders.DashAssetFinder',
+    'django_plotly_dash.finders.DashComponentFinder',
+    'django_plotly_dash.finders.DashAppDirectoryFinder',
+]
+
+# Plotly components containing static content that should
+# be handled by the Django staticfiles infrastructure
+
+PLOTLY_COMPONENTS = [
+    'dash_core_components',
+    'dash_html_components',
+    'dash_bootstrap_components',
+    'dash_renderer',
+    'dpd_components',
+    'dpd_static_support',
+]
+
+PLOTLY_DASH = {
+    "ws_route": "ws/channel",
+    "insert_demo_migrations": True,  # Insert model instances used by the demo
+    "http_poke_enabled": True,  # Flag controlling availability of direct-to-messaging http endpoint
+    "view_decorator": None,  # Specify a function to be used to wrap each of the dpd view functions
+    "cache_arguments": True,  # True for cache, False for session-based argument propagation
+    # "serve_locally" : True, # True to serve assets locally, False to use their unadulterated urls (eg a CDN)
+    "stateless_loader": "demo.scaffold.stateless_app_loader",
 }
