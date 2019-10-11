@@ -698,14 +698,14 @@ class DashCharts:
                                 id='Disease',
                                 value=['Homens'],
                                 style={
-                                    'borderBottom': 'thin lightgrey solid',
-                                    'backgroundColor': 'rgb(250, 250, 250)',
+                                    'backgroundColor': 'rgb(255, 255, 255)',
+                                    "height": "30px",
+                                    "width": "100%",
                                     'padding': '0px 0px',
                                 },
-                                labelStyle={'display': 'inline-block'},
                             ),
                         ],
-                        className='six columns',
+                        # className='six columns',
                     ),
                     html.Div(
                         [
@@ -716,16 +716,9 @@ class DashCharts:
                                     for k in all_options.keys()
                                 ],
                                 value='All',
-                                # labelStyle={'displa': 'inline-block'},
-                                style={
-                                    'borderBottom': 'thin lightgrey solid',
-                                    'backgroundColor': 'rgb(250, 250, 250)',
-                                    'padding': '5px 0px',
-                                },
-                                labelStyle={'display': 'inline-block'},
                             )
                         ],
-                        className="row",
+                        # className="row",
                     ),
                     html.Div(
                         [
@@ -742,7 +735,7 @@ class DashCharts:
                                 ]
                             )
                         ],
-                        className='six columns',
+                        # className='six columns',
                     ),
                     html.Div(
                         [
@@ -755,10 +748,10 @@ class DashCharts:
                                 },
                             )
                         ],
-                        className="six columns",
+                        # className="six columns",
                     ),
                 ],
-                className="row",
+                # className="row",
             )
         )
 
@@ -903,13 +896,7 @@ class DashCharts:
                             dict(
                                 title="Casos por semanas epidemiologicas",
                                 yaxis={"title": "Casos"},
-                                xaxis=dict(
-                                    rangeselector=dict(
-                                        buttons=list([dict(step='all')])
-                                    ),
-                                    rangeslider=dict(),
-                                    type='date',
-                                ),
+                                xaxis={"title": "Semana"},
                                 showlegend=False,
                             )
                         ),
@@ -997,7 +984,7 @@ class DashCharts:
                     style={
                         'padding': '0px 20px 0px 0px',
                         "height": "100%",
-                        "width": "100%",
+                        "width": "95%",
                     },
                     id='example-graph',
                     figure={'data': data, 'layout': layout},
