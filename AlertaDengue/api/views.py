@@ -3,7 +3,13 @@ from django.views.generic.base import View
 from datetime import datetime
 
 # local
-from .db import NotificationQueries, STATE_NAME, AlertCity, MRJ_GEOCODE
+from .db import (
+    NotificationQueries,
+    STATE_NAME,
+    AlertCity,
+    MRJ_GEOCODE,
+    ClimateWu,
+)
 from dados.episem import episem
 
 import json
@@ -223,5 +229,22 @@ class EpiYearWeekView(View, _GetMethod):
         content_type = (
             'application/json' if output_format == 'json' else 'text/plain'
         )
+
+        return HttpResponse(result, content_type=content_type)
+
+
+class ClimateDataView(View, _GetMethod):
+    def get(self, request, geocodigo):
+        self.request = request
+
+        _clima = ClimateWu()
+
+        station = _clima.get_regional_station(geocode=geocodigo)
+
+        data = _clima.get_clima_wu_id(station.iloc[0].codigo_estacao_wu)
+
+        result = data.to_json(orient='records')
+
+        content_type = 'application/json' if format == 'json' else 'text/plain'
 
         return HttpResponse(result, content_type=content_type)

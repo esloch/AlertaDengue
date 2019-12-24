@@ -3,7 +3,10 @@ from sqlalchemy import create_engine
 # local
 from . import settings
 from dados.dbdata import (  # noqa:F401
-    CID10, STATE_NAME, get_disease_suffix, MRJ_GEOCODE
+    CID10,
+    STATE_NAME,
+    get_disease_suffix,
+    MRJ_GEOCODE,
 )
 
 import pandas as pd
@@ -593,6 +596,45 @@ class AlertCity:
             ew_start,
             ew_end,
             str(ew_end)[:4],
+        )
+
+        with db_engine.connect() as conn:
+            return pd.read_sql(sql, conn)
+
+
+class ClimateWu:
+    @staticmethod
+    def get_regional_station(geocode: int):
+        """
+        :param geocode:
+        :return:
+        """
+
+        sql = (
+            '''
+        SELECT codigo_estacao_wu
+        FROM "Dengue_global".regional_saude
+        WHERE municipio_geocodigo = %s
+        '''
+            % geocode
+        )
+
+        with db_engine.connect() as conn:
+            return pd.read_sql(sql, conn)
+
+    @staticmethod
+    def get_clima_wu_id(Estacao_wu_estacao_id: str):
+        """
+        :param Estacao_wu_estacao_id:
+        :return:
+        """
+        sql = (
+            '''
+            SELECT *
+            FROM "Municipio"."Clima_wu"
+            WHERE  "Clima_wu"."Estacao_wu_estacao_id"='%s';
+            '''
+            % Estacao_wu_estacao_id
         )
 
         with db_engine.connect() as conn:
