@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine
+from django.utils.translation import gettext as _
 
 # local
 from . import settings
@@ -21,17 +22,26 @@ db_engine = create_engine(
 
 class NotificationQueries:
     _age_field = '''
-        CASE
-        WHEN nu_idade_n <= 4004 THEN '00-04 anos'
-        WHEN nu_idade_n BETWEEN 4005 AND 4009 THEN '05-09 anos'
-        WHEN nu_idade_n BETWEEN 4010 AND 4019 THEN '10-19 anos'
-        WHEN nu_idade_n BETWEEN 4020 AND 4029 THEN '20-29 anos'
-        WHEN nu_idade_n BETWEEN 4030 AND 4039 THEN '30-39 anos'
-        WHEN nu_idade_n BETWEEN 4040 AND 4049 THEN '40-49 anos'
-        WHEN nu_idade_n BETWEEN 4050 AND 4059 THEN '50-59 anos'
-        WHEN nu_idade_n >=4060 THEN '60+ anos'
-        ELSE NULL
-        END AS age'''
+            CASE
+            WHEN nu_idade_n <= 4004 THEN '{}'
+            WHEN nu_idade_n BETWEEN 4005 AND 4009 THEN '{}'
+            WHEN nu_idade_n BETWEEN 4010 AND 4019 THEN '{}'
+            WHEN nu_idade_n BETWEEN 4020 AND 4029 THEN '{}'
+            WHEN nu_idade_n BETWEEN 4030 AND 4039 THEN '{}'
+            WHEN nu_idade_n BETWEEN 4040 AND 4049 THEN '{}'
+            WHEN nu_idade_n BETWEEN 4050 AND 4059 THEN '{}'
+            WHEN nu_idade_n >=4060 THEN '{}'
+            ELSE NULL
+            END AS age'''.format(
+                _("00-04 anos"),
+                _("05-09 anos"),
+                _("10-19 anos"),
+                _("20-29 anos"),
+                _("30-39 anos"),
+                _("40-49 anos"),
+                _("50-59 anos"),
+                _("60+ anos"),
+                )
     dist_filters = None
 
     def __init__(
@@ -315,8 +325,8 @@ class NotificationQueries:
         SELECT
             age AS category,
             --count(age) AS casos
-            COUNT(is_female) AS "Mulher",
-            COUNT(is_male) AS "Homem"
+            COUNT(is_female) AS "{}",
+            COUNT(is_male) AS "{}"
         FROM (
             SELECT
                 *,
@@ -332,6 +342,8 @@ class NotificationQueries:
         GROUP BY age
         ORDER BY age
         '''.format(
+            _("Mulher"),
+            _("Homem"),
             self._age_field, _dist_filters
         )
 
@@ -406,8 +418,8 @@ class NotificationQueries:
         sql = '''
         SELECT
             (CASE COALESCE(cs_sexo, NULL)
-             WHEN 'M' THEN 'Homem'
-             WHEN 'F' THEN 'Mulher'
+             WHEN 'M' THEN '{}'
+             WHEN 'F' THEN '{}'
              ELSE NULL
              END
             ) AS category,
@@ -423,6 +435,8 @@ class NotificationQueries:
         WHERE {} AND cs_sexo IN ('F', 'M')
         GROUP BY cs_sexo;
         '''.format(
+            'Homem',
+            'Mulher',
             self._age_field, _dist_filters
         )
 
