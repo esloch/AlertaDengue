@@ -61,6 +61,24 @@ def _nan_to_num_int_list(v):
         return np.nan_to_num(v).astype(int).tolist()
 
 
+def variation_p(v1, v2):
+    """
+    Round values.
+
+    :param v1: float
+    :param v2: float
+    :return: float
+    """
+    return round(
+        0
+        if v1 == v2 == 0
+        else ((v2 - v1) / 1) * 100
+        if v1 == 0
+        else ((v2 - v1) / v1) * 100,
+        2,
+    )
+
+
 def _episem(dt):
     return episem(dt, sep='')
 

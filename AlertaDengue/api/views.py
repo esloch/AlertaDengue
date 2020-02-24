@@ -1,8 +1,13 @@
-from django.http import HttpResponse
-from django.views.generic.base import View
+from collections import defaultdict
 from datetime import datetime
 
+from django.http import HttpResponse
+from django.views.generic.base import View
+
+
 # local
+from dados import dbdata
+from dados.dbdata import variation_p
 from .db import NotificationQueries, STATE_NAME, AlertCity, MRJ_GEOCODE
 from dados.episem import episem
 
@@ -225,3 +230,115 @@ class EpiYearWeekView(View, _GetMethod):
         )
 
         return HttpResponse(result, content_type=content_type)
+
+
+class InfoStateView(View, _GetMethod):
+
+    _state_names = sorted(dbdata.STATE_NAME.values())
+    _state_initials = {v: k for k, v in dbdata.STATE_NAME.items()}
+
+    def get(self, request, *args, **kwargs):
+        self.request = request
+        output_format = 'json'
+
+        # format = self._get(
+        #     'format', error_message='Format sent is empty.'
+        # ).lower()
+
+        diseases = tuple(dbdata.CID10.keys())
+        '''
+        from dados.maps import get_city_info
+        geocode = context['geocodigo']
+        'state': city_info['uf'],
+        city_info = get_city_info(geocode)
+        'populacao': city_info['populacao'],
+
+        '''
+        # today
+        last_se = {}
+
+        case_series = defaultdict(dict)
+        case_series_state = defaultdict(dict)
+
+        count_cities = defaultdict(dict)
+        current_week = defaultdict(dict)
+        estimated_cases_next_week = defaultdict(dict)
+        variation_to_current_week = defaultdict(dict)
+        variation_4_weeks = defaultdict(dict)
+        v1_week_fixed = defaultdict(dict)
+        v1_4week_fixed = defaultdict(dict)
+
+        notif_resume = dbdata.NotificationResume
+        '''
+
+        municipios, geocodigos = list(mundict.values()), list(mundict.keys())
+
+        '''
+        mundict = dict(dbdata.get_all_active_cities())
+        # results[d] = dbdata.load_serie_cities(geocodigos, d)
+
+        for d in diseases:
+            case_series[d] = dbdata.get_series_by_UF(d)
+
+            for s in self._state_names:
+                df = case_series[d]  # alias
+                df_state = df[df.uf == s]
+                cases = df_state.casos_s.values
+
+                # cases estimation
+                cases_est = df_state.casos_est_s.values
+
+                case_series_state[d][s] = cases[:-52]
+
+                if d == 'dengue':
+                    if not df_state.empty:
+                        last_se[s] = df_state.tail(1).data.iloc[0]
+                    else:
+                        last_se[s] = ''
+
+                count_cities[d][s] = notif_resume.count_cities_by_uf(s, d)
+                current_week[d][s] = {
+                    'casos': cases[-1] if cases.size else 0,
+                    'casos_est': cases_est[-1] if cases_est.size else 0,
+                }
+                # estimated_cases_next_week[d][s] = int(0)
+                v1 = 0 if not cases_est.size else cases_est[-2]
+                v2 = 0 if not cases_est.size else cases_est[-1]
+
+                v1_week_fixed[d][s] = v1 == 0 and v2 != 0
+
+                variation_to_current_week[d][s] = variation_p(v1, v2)
+
+                if cases_est.size < 55:
+                    variation_4_weeks[d][s] = 0
+                else:
+                    v2 = cases_est[-4:-1].sum()
+                    v1 = cases_est[-55:-52].sum()
+
+                    v1_4week_fixed[d][s] = v1 == 0 and v2 != 0
+
+                    variation_4_weeks[d][s] = variation_p(v1, v2)
+
+        result = {
+            'estado': self._state_initials,
+            'municipios participantes': str(count_cities),
+            'num_mun': len(mundict),
+            'current_week': str(current_week),
+            'estimated_cases_next_week': estimated_cases_next_week,
+            'ultima atualização': {
+                k: d.isoformat() for k, d in last_se.items()
+            },
+            'variação na semana': variation_to_current_week,
+            'variação 4 semanas': variation_4_weeks,
+            'case_series': {
+                k: v.to_json('record') for k, v in case_series.items()
+            },
+        }
+        # import pdb; pdb.set_trace()
+
+        content_type = (
+            'application/json' if output_format == 'json' else 'text/plain'
+        )
+
+        return HttpResponse(json.dumps(result), content_type=content_type)
+        # json.dumps
