@@ -41,4 +41,5 @@ AlertaDengue/static_files/*
 # env
 .env*
 
-.mypy_cache
+/docker/*
+/.mypy_cache/*
