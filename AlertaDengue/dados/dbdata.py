@@ -1414,8 +1414,21 @@ class ReportState:
         sql += climate_join + tweet_join
 
         sql = ' SELECT {} FROM ({}) AS data'.format(','.join(k), sql)
-
         df = pd.read_sql(sql, index_col='SE', con=db_engine)
+
+        """
+        Parameters
+        ----------
+        df : pd.DataFrame
+
+        Returns
+        -------
+        pd.DataFrame
+        """
+
+        # make a copy
+        df = df.copy()
+        df.fillna(0, inplace=True)
 
         if not df.empty:
             dfs = []
@@ -1446,14 +1459,7 @@ class ReportState:
                 )
 
                 dfs.append(
-                    pd.merge(
-                        df_,
-                        df_date_,
-                        how='outer',
-                        on='init_date_week',
-                        left_index=True,
-                        right_index=True,
-                    )
+                    pd.merge(df_, df_date_, how='outer', on='init_date_week',)
                 )
 
             df = pd.concat(dfs)
