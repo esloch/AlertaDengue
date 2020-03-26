@@ -1554,6 +1554,7 @@ class ReportState:
         """
         # make a copy
         df = df.copy()
+        df.fillna(0, inplace=True)
 
         if not df.empty:
             dfs = []
@@ -1589,8 +1590,6 @@ class ReportState:
                         df_date_,
                         how='outer',
                         on='init_date_week',
-                        left_index=True,
-                        right_index=True,
                     )
                 )
 
