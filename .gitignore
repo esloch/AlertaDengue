@@ -41,5 +41,4 @@ authorized_keys
 # env
 .env*
 
-/docker/*
-/.mypy_cache/*
+.mypy_cache
