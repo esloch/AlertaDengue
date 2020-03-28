@@ -25,7 +25,7 @@ ARG PYTHON_VERSION
 COPY environment-${PYTHON_VERSION}.yml /tmp/environment.yml
 
 # Use environment to update the env base
-RUN mamba env update --file /tmp/environment.yml --name base \
+RUN conda env update --file /tmp/environment.yml --name base \
   && conda clean -afy
 
 # Create deploy user

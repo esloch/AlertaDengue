@@ -1,0 +1,92 @@
+version: 2
+
+base: &base
+  working_directory: ~/repo
+  docker:
+    - image: continuumio/miniconda3:latest
+test: &test
+  <<: *base
+  steps:
+    - checkout
+    - setup_remote_docker
+    - run:
+        name: Install Docker dependencies
+        command: |
+          apt-get update
+          apt-get install gnupg-agent --yes 
+          apt install docker.io --yes
+    - run:
+        name: Install Git and LFS
+        command: |
+          apt-get update
+          apt-get install git
+          mkdir docker/.git-lfs
+          wget https://github.com/git-lfs/git-lfs/releases/download/v2.10.0/git-lfs-linux-amd64-v2.10.0.tar.gz -O docker/.git-lfs/git_lfs.tar.gz
+          tar -zxf docker/.git-lfs/git_lfs.tar.gz -C docker/.git-lfs/
+          chmod +x docker/.git-lfs/install.sh
+          ./docker/.git-lfs/install.sh
+    # Provide CircleCI with a GitHub user key on your project’s Project Settings > Checkout SSH keys page
+    - add_ssh_keys:
+        fingerprints:
+          - "16:55:9f:6c:e4:3c:f6:87:34:67:c8:92:74:6b:ca:a2"
+    - run:
+        name: Clone frontend repository
+        command: >-
+          GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa_fingerprint'
+          git clone https://github.com/esloch/Data.git ./docker/dev_dumps
+    - run:
+        name: Rename data file and merge patch
+        command: |
+          mv docker/dev_dumps/alertademo_data.sql docker/dev_dumps/latest_dengue.sql
+          cat ./docker/dev_dumps/patch/notificacao.sql >> docker/dev_dumps/latest_dengue.sql
+    - run:
+        name: Prepare data file
+        command: |
+          cat ./docker/dev_dumps/latest_dengue.sql | gzip > ./docker/dev_dumps/latest_dengue.sql.gz
+          echo '' | gzip > ./docker/dev_dumps/latest_infodengue.sql.gz
+    - run:
+        name: Copy env_file as env_staging
+        command: |
+          cp example_env_file /root/repo/.env_staging
+    - run:
+        name: Update Conda
+        command: |
+          conda config --set always_yes True
+          conda config --add channels conda-forge
+          conda install -n base conda
+          conda update --all
+          conda install docker-compose make
+          conda env create -f environment-${PYTHON_VERSION}.yml
+          conda install --file requirements-dev.txt --name alertadengue python=${PYTHON_VERSION} 
+    - run:
+        name: make deploy_staging
+        command: make deploy_staging
+    - run:
+        name: Show the exact environment used
+        command: |
+          source activate alertadengue
+          conda list
+    - run:
+        name: Run flake8
+        command: |
+          source activate alertadengue
+          cd AlertaDengue
+          pwd
+          flake8
+    - run:
+        name: Run Tests
+        command: |
+          make test_web
+    
+
+jobs:
+  python37_test:
+      <<: *test
+      environment:
+        - PYTHON_VERSION: 3.7
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - python37_test

@@ -8,6 +8,9 @@ export
 compose_cmd = docker-compose -p infodengue -f docker/docker-compose.yml --env-file .env
 staging_compose_cmd = docker-compose -f docker/staging-compose.yml --env-file .env_staging
 
+SERVICES :=
+
+
 build:
 	$(compose_cmd) build
 
@@ -21,7 +24,8 @@ deploy: build_migrate
 generate_maps: build_migrate
 	$(compose_cmd) run --rm web python3 manage.py sync_geofiles
 	$(compose_cmd) run --rm web python3 manage.py generate_meteorological_raster_cities
-	$(compose_cmd) run --rm web python3 manage.py generate_mapfiles
+	$(compose_cmd) run --rm web python3 manage.py generate_mapfiles --date-start=None
+	$(compose_cmd) run --rm web python3 manage.py python3 manage.py collectstatic --noinput
 
 stop:
 	$(compose_cmd) stop
@@ -33,18 +37,25 @@ build_staging:
 build_migrate_staging: build_staging
 	$(staging_compose_cmd) run --rm staging_db postgres -V
 	$(staging_compose_cmd) run --rm staging_web python3 manage.py migrate --noinput
-	$(staging_compose_cmd) run --rm staging_web python3 manage.py migrate --database=forecast --noinput
+	#$(staging_compose_cmd) run --rm staging_web python3 manage.py migrate --database=forecast --noinput
+	$(staging_compose_cmd) run --rm staging_web python3 manage.py migrate --database=infodengue --noinput
 
 deploy_staging: build_migrate_staging
 	$(staging_compose_cmd) up -d
+
+# Exemplo: make start_staging SERVICES=staging_db
+start_staging:
+	$(staging_compose_cmd) up -d ${SERVICES}
 
 stop_staging:
 	$(staging_compose_cmd) stop
 
 generate_maps_staging: build_migrate_staging
-	$(staging_compose_cmd) run --rm web python3 manage.py sync_geofiles
-	$(staging_compose_cmd) run --rm web python3 manage.py generate_meteorological_raster_cities
-	$(staging_compose_cmd) run --rm web python3 manage.py generate_mapfiles
+	$(staging_compose_cmd) run --rm staging_web python3 manage.py sync_geofiles
+	$(staging_compose_cmd) run --rm staging_web python3 manage.py generate_meteorological_raster_cities
+	$(staging_compose_cmd) run --rm staging_web python3 manage.py generate_mapfiles --date-start=None
+	$(staging_compose_cmd) run --rm staging_web python3 manage.py collectstatic --noinput
+
 
 clean_staging:
 	$(staging_compose_cmd) stop
@@ -66,5 +77,13 @@ remove_untagged_images:
 
 # Docker TEST
 
-flake8_staging: build_staging
-	$(staging_compose_cmd) run --rm staging_web flake8
+flake8_web: build_staging
+	$(staging_compose_cmd) run --rm --no-deps staging_web flake8
+
+test_web: generate_maps_staging
+	$(staging_compose_cmd) run --no-deps staging_web bash ../docker/test.sh dados
+	$(staging_compose_cmd) run --no-deps staging_web bash ../docker/test.sh dbf
+	$(staging_compose_cmd) run --no-deps staging_web bash ../docker/test.sh gis
+	$(staging_compose_cmd) run --no-deps staging_web bash ../docker/test.sh api
+	#$(staging_compose_cmd) run --no-deps staging_web bash ../docker/test.sh forecast
+
