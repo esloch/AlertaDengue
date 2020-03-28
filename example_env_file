@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 ALLOWED_HOSTS=alerta.dengue.mat.br,info.dengue.mat.br
 
 ADMINS=Dev:dev@example.com
+=======
+ALLOWED_HOSTS=alerta.dengue.mat.br,info.dengue.mat.br,*
+
+ADMINS=test:test@test.com
+>>>>>>> 4296177... Adding tests to CI (#11)
 
 SECRET_KEY=my-secret-key
 
@@ -8,13 +14,20 @@ DEBUG=True
 
 EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
 EMAIL_FROM_ADDRESS=no-reply@info.dengue.mat.br
+<<<<<<< HEAD
 INFODENGUE_TEAM_EMAIL=no-reply@info.dengue.mat.br
 
 EMAIL_CONFIG=django.core.mail.backends.smtp.EmailBackend
+=======
+INFODENGUE_TEAM_EMAIL=infodengue@info.dengue.mat.br
+
+EMAIL_CONFIG=smtp.gmail.com,587,test@gmail.com,password
+>>>>>>> 4296177... Adding tests to CI (#11)
 
 CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672
 CELERY_TASK_ALWAYS_EAGER=True
 
+<<<<<<< HEAD
 PSQL_HOST=dbdemo
 PSQL_DB=dbase
 PSQL_DBF=dbase
@@ -23,22 +36,46 @@ PSQL_PASSWORD=123
 PSQL_PORT=25432
 POSTGRES_USER=admin
 POSTGRES_PASSWORD=123
+=======
+PSQL_HOST=localhost
+PSQL_DB=dengue
+PSQL_DBF=infodengue
+PSQL_USER=dengueadmin
+PSQL_PASSWORD=dbdemo
+PSQL_PORT=25432
+POSTGRES_USER=dengueadmin
+POSTGRES_PASSWORD=dbdemo
+>>>>>>> 4296177... Adding tests to CI (#11)
 
 MEDIA_ROOT=/MEDIA_ROOT
 IMPORTED_FILES_DIR=/IMPORTED_FILES
 
+<<<<<<< HEAD
 DOCKER_HOST_MEDIA_ROOT=/srv/deploy/uploaded
 DOCKER_HOST_IMPORTED_FILES_DIR=/srv/deploy/imported
 DOCKER_HOST_MAPFILES_DIR=/srv/deploy/mapfiles
 DOCKER_HOST_SHAPEFILES_DIR=/srv/deploy/shapefiles
 DOCKER_HOST_TIFFS_DIR=/srv/deploy/tiffs
 DOCKER_HOST_LOG_DIR=/srv/deploy/logs
+=======
+DOCKER_HOST_MEDIA_ROOT=/Storage/staging_data/sftp2/alertadengue/uploaded
+DOCKER_HOST_IMPORTED_FILES_DIR=/Storage/staging_data/sftp2/alertadengue/imported
+DOCKER_HOST_MAPFILES_DIR=/Storage/staging_data/mapfiles
+DOCKER_HOST_SHAPEFILES_DIR=/Storage/staging_data/shapefiles
+DOCKER_HOST_TIFFS_DIR=/Storage/staging_data/tiffs
+DOCKER_HOST_LOG_DIR=/Storage/staging_data/logs
+>>>>>>> 4296177... Adding tests to CI (#11)
 
 QUERY_CACHE_TIMEOUT=86400
 MEMCACHED_HOST=127.0.0.1
 MEMCACHED_PORT=11211
 
+<<<<<<< HEAD
 STAGING_DATA_DIR=/srv/deploy/data
+=======
+STAGING_DATA_DIR=/Storage/staging_data_dir
+DATABASE_URL=postgres://dengueadmin:aldengue@staging_db:25432/infodengue
+>>>>>>> 4296177... Adding tests to CI (#11)
 
 MAPSERVER_URL=http://mapserver:80
 RASTER_PATH=/srv/deploy/tiffs

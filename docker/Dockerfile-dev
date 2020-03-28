@@ -15,10 +15,14 @@ ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
 # Create deploy user
+<<<<<<< HEAD
 ARG HOST_UID
 ARG HOST_GID
 COPY docker/prepare_permission.sh /prepare_permission.sh
 RUN /prepare_permission.sh
+=======
+RUN useradd --shell=/bin/bash --home=/srv/deploy/ --create-home deploy
+>>>>>>> 4296177... Adding tests to CI (#11)
 
 ARG PYTHON_VERSION
 COPY environment-${PYTHON_VERSION}.yml /tmp/environment.yml
@@ -40,6 +44,7 @@ COPY --chown=deploy AlertaDengue  /srv/deploy/AlertaDengue
 # files
 COPY --chown=deploy pyproject.toml setup.cfg setup.py .pre-commit-config.yaml README.md HISTORY.md requirements.txt example_env_file /srv/deploy/
 
+<<<<<<< HEAD
 ADD requirements-dev.txt /tmp/requirements-dev.txt
 
 RUN pip install -r /tmp/requirements-dev.txt
@@ -47,15 +52,29 @@ RUN pip install -r /tmp/requirements-dev.txt
 # Create script activate environment
 RUN echo 'source /opt/conda/bin/activate base && exec "$@"' > activate.sh
 RUN chmod +x /activate.sh
+=======
+>>>>>>> 4296177... Adding tests to CI (#11)
 WORKDIR /srv/deploy/AlertaDengue
 
 RUN cp /srv/deploy/example_env_file /srv/deploy/.env_staging
 
+<<<<<<< HEAD
+=======
+# install libs for testing
+RUN conda install -n base --yes \
+  pre-commit black flake8 pytest pytest-django vim \
+  && conda clean --all --yes
+
+>>>>>>> 4296177... Adding tests to CI (#11)
 # install the AlertaDengue
 RUN cd ..; python setup.py install
 
 EXPOSE 8000
 USER deploy
 
+<<<<<<< HEAD
 ENTRYPOINT ["bash", "/activate.sh"]
 CMD ["/srv/deploy/AlertaDengue/runwsgi.sh"]
+=======
+CMD ["/srv/deploy/AlertaDengue/runwsgi.sh"]
+>>>>>>> 4296177... Adding tests to CI (#11)
