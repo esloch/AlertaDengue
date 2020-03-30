@@ -26,7 +26,7 @@ test: &test
         name: Prepare data file
         command: |
           mv docker/dev_dumps/alertademo_data.sql docker/dev_dumps/latest_dengue.sql
-          cat patch/notificacao.sql >> docker/dev_dumps/latest_dengue.sql
+          cat ./docker/dev_dumps/patch/notificacao.sql >> docker/dev_dumps/latest_dengue.sql
           gunzip -c ./docker/dev_dumps/latest_dengue.sql.gz | cat ./docker/dev_dumps/latest_dengue.sql
     - run:
         name: Update Conda
