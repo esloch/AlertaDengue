@@ -19,6 +19,10 @@ test: &test
           git lfs install
           git-lfs clone https://github.com/AlertaDengue/Data.git ./docker/dev_dumps
     - run:
+        name: Show dir data file
+        command: |
+          ls -la ./docker/dev_dumps
+    - run:
         name: Prepare data file
         command: |
           mv docker/dev_dumps/alertademo_data.sql docker/dev/_dumps/latest_dengue.sql
