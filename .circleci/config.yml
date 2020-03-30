@@ -19,14 +19,13 @@ test: &test
           git lfs install
           git-lfs clone https://github.com/AlertaDengue/Data.git ./docker/dev_dumps
     - run:
-        name: Show dir data file
-        command: |
-          ls -la ./docker/dev_dumps
-    - run:
-        name: Prepare data file
+        name: Rename data file and merge patch
         command: |
           mv docker/dev_dumps/alertademo_data.sql docker/dev_dumps/latest_dengue.sql
           cat ./docker/dev_dumps/patch/notificacao.sql >> docker/dev_dumps/latest_dengue.sql
+    - run:
+        name: Prepare data file
+        command: |
           gunzip -c ./docker/dev_dumps/latest_dengue.sql.gz | cat ./docker/dev_dumps/latest_dengue.sql
     - run:
         name: Update Conda
