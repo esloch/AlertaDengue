@@ -25,15 +25,15 @@ test: &test
         cat patch/notificacao.sql >> docker/dev_dumps/latest_dengue.sql
         gunzip -c ./docker/dev_dumps/latest_dengue.sql.gz | cat ./docker/dev_dumps/latest_dengue.sql
     - run:
-        name: Update Conda
-        command: |
-          conda config --set always_yes True
-          conda config --add channels conda-forge
-          conda install -n base conda
-          conda update --all
-          conda install docker-compose
-          # conda env create -f environment-${PYTHON_VERSION}.yml
-          # conda install python=${PYTHON_VERSION} -n alertadengue --file requirements-dev.txt
+      name: Update Conda
+      command: |
+        conda config --set always_yes True
+        conda config --add channels conda-forge
+        conda install -n base conda
+        conda update --all
+        conda install docker-compose
+        # conda env create -f environment-${PYTHON_VERSION}.yml
+        # conda install python=${PYTHON_VERSION} -n alertadengue --file requirements-dev.txt
     - run:
       name: make deploy_staging
       command: make deploy_staging
