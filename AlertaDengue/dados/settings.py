@@ -1,8 +1,6 @@
-try:
-    # to be used externally (such as notebooks science)
-    from AlertaDengue.AlertaDengue import settings
-except Exception:
-    from django.conf import settings
+
+from AlertaDengue.ad_main import settings
+
 
 PSQL_DB = settings.PSQL_DB
 PSQL_HOST = settings.PSQL_HOST
