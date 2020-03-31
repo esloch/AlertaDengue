@@ -56,14 +56,14 @@ test: &test
           cd AlertaDengue
           flake8
 
-jobs:
-  python37_test:
-      <<: *test
-      environment:
-        - PYTHON_VERSION: 3.7
+# jobs:
+#   python37_test:
+#       <<: *test
+#       environment:
+#         - PYTHON_VERSION: 3.7
 
-workflows:
-  version: 2
-  test:
-    jobs:
-      - python37_test
+# workflows:
+#   version: 2
+#   test:
+#     jobs:
+#       - python37_test
