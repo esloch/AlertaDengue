@@ -17,7 +17,7 @@ test: &test
           apt-get update
           apt-get install -y git-lfs
           git lfs install
-          git-lfs clone https://github.com/AlertaDengue/Data.git ./docker/dev_dumps
+          git lfs clone https://github.com/AlertaDengue/Data.git ./docker/dev_dumps
     - run:
         name: Rename data file and merge patch
         command: |
