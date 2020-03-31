@@ -8,13 +8,7 @@ jobs:
     working_directory: ~/repo
     docker:
       - image: continuumio/miniconda3:latest
-  python37_test:
-      # <<: *test
-      environment:
-        - PYTHON_VERSION: 3.7
 
-test: &test
-  <<: *base
   steps:
     - checkout
     - run:
@@ -60,6 +54,11 @@ test: &test
           source activate alertadengue
           cd AlertaDengue
           flake8
+          
+  python37_test:
+      # <<: *test
+      environment:
+        - PYTHON_VERSION: 3.7
 
 workflows:
   version: 2
