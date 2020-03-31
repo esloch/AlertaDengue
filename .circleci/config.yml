@@ -38,6 +38,9 @@ test: &test
           # conda env create -f environment-${PYTHON_VERSION}.yml
           # conda install python=${PYTHON_VERSION} -n alertadengue --file requirements-dev.txt
     - run:
+        name: Copy env_file as env_staging
+        command: cp example_env_file .env_staging
+    - run:
         name: make deploy_staging
         command: make deploy_staging
     - run:
