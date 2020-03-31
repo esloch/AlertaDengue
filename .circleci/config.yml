@@ -64,4 +64,5 @@ workflows:
   version: 2
   test:
     jobs:
+      - build
       - python37_test
