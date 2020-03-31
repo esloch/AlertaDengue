@@ -9,7 +9,7 @@ jobs:
     docker:
       - image: continuumio/miniconda3:latest
   python37_test:
-      <<: *test
+      # <<: *test
       environment:
         - PYTHON_VERSION: 3.7
 
