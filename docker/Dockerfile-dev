@@ -44,7 +44,6 @@ RUN cp /srv/deploy/example_env_file /srv/deploy/.env_staging
 # install libs for testing
 RUN conda install -n base --yes \
   pre-commit black flake8 pytest pytest-django vim \
-  make \
   && conda clean --all --yes
 
 # install the AlertaDengue

@@ -34,7 +34,7 @@ test: &test
           conda config --add channels conda-forge
           conda install -n base conda
           conda update --all
-          conda install docker-compose
+          conda install docker-compose make
           # conda env create -f environment-${PYTHON_VERSION}.yml
           # conda install python=${PYTHON_VERSION} -n alertadengue --file requirements-dev.txt
     - run:
