@@ -4,7 +4,7 @@ version: 2
 base: &base
   working_directory: ~/repo
   machine:
-    - image: continuumio/miniconda3:latest
+    image: continuumio/miniconda3:latest
 
 
 test: &test
