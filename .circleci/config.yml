@@ -33,11 +33,12 @@ test: &test
         command: |
           ssh -T git@github.com
     - run:
-        name: Clone Data repo
+        name: Install GIT LFS and clone Data repo
         command: |
-          ssh-keygen -R github.com
-          ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
-          git lfs clone https://github.com/AlertaDengue/Data.git ./docker/dev_dumps/
+            apt-get update
+            apt-get install -y git-lfs
+            git lfs install
+            git-lfs clone https://github.com/AlertaDengue/Data.git ./docker/dev_dumps
     - run:
         name: Rename data file and merge patch
         command: |
