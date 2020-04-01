@@ -19,8 +19,7 @@ test: &test
           apt-get install sudo
           apt-get install curl -y
           apt-get install gnupg-agent --yes
-          apt update && sudo apt install apt-transport-https ca-certificates curl software-properties-common -y && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - && sudo add-apt-repository "deb [arch=amd64] https://apt.dockerproject.org/repo ubuntu-xenial main" \
-          sudo apt update && apt-get install && apt-get install docker-engine -y
+          apt install docker.io
     - run:
         name: Install GIT LFS and clone Data repo
         command: |
