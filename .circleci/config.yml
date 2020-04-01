@@ -30,7 +30,7 @@ test: &test
     - run:
         name: Clone Data repo
         command: |
-          git-lfs clone https://github.com/esloch/Data.git ./docker/dev_dumps          
+          git clone https://github.com/AlertaDengue/Data.git ./docker/dev_dumps          
     - run:
         name: Rename data file and merge patch
         command: |
