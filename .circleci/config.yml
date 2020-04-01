@@ -13,6 +13,10 @@ test: &test
     - checkout
     - setup_remote_docker
     - run:
+        name: Instal Docker-ce and Docker-cli
+        command: |
+          apt-get install docker-ce docker-ce-cli containerd.io
+    - run:
         name: Install GIT LFS and clone Data repo
         command: |
           apt-get update
