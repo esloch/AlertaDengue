@@ -35,6 +35,7 @@ test: &test
     - run:
         name: Rename data file and merge patch
         command: |
+          mv docker/dev2_dumps/ docker/dev_dumps/
           mv docker/dev_dumps/alertademo_data.sql docker/dev_dumps/latest_dengue.sql
           cat ./docker/dev_dumps/patch/notificacao.sql >> docker/dev_dumps/latest_dengue.sql
     - run:
