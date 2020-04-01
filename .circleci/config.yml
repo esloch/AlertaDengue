@@ -23,7 +23,7 @@ test: &test
         name: Install GIT LFS and clone Data repo
         command: |
           apt-get update
-          at-get install sudo
+          apt-get install sudo
           curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
           # apt-get install -y git-lfs
           # git lfs install
