@@ -13,6 +13,12 @@ test: &test
   steps:
     - checkout
     - run:
+        name: Install Docker dependencies
+        command: |
+          apt-get update
+          apt-get install gnupg-agent --yes
+          apt install docker.io --yes
+    - run:
         name: Install GIT LFS and clone Data repo
         command: |
           apt-get update
