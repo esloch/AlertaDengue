@@ -18,7 +18,7 @@ test: &test
           apt-get update
           apt-get install sudo
           apt-get install curl -y
-          apt-get install gnupg-agent --yes
+          apt-get install gnupg-agent --yes 
           apt install docker.io
     - run:
         name: Install GIT LFS and clone Data repo
