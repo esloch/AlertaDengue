@@ -29,7 +29,7 @@ test: &test
           # conda env create -f environment-${PYTHON_VERSION}.yml
           # conda install python=${PYTHON_VERSION} -n alertadengue --file requirements-dev.txt
     - run:
-        name: Clone Data repo
+        name: ssh
         command: |
           ssh -T git@github.com
     - run:
