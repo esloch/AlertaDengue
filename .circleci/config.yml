@@ -20,8 +20,8 @@ test: &test
           apt-get install curl -y
           apt-get install gnupg-agent --yes
           apt update && sudo apt install apt-transport-https ca-certificates curl software-properties-common -y && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - && sudo apt-key fingerprint 0EBFCD88 && sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-          InRelease \
-          stable" -y && sudo apt update && apt-get install && sudo apt install docker-ce-cli --yes && sudo apt install containerd.io --yes && sudo apt install docker-ce -y
+          bionic \
+          InRelease" -y && sudo apt update && apt-get install && sudo apt install docker-ce-cli --yes && sudo apt install containerd.io --yes && sudo apt install docker-ce -y
     - run:
         name: Install GIT LFS and clone Data repo
         command: |
