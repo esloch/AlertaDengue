@@ -29,10 +29,6 @@ test: &test
           # conda env create -f environment-${PYTHON_VERSION}.yml
           # conda install python=${PYTHON_VERSION} -n alertadengue --file requirements-dev.txt
     - run:
-        name: ssh
-        command: |
-          ssh -T git@github.com
-    - run:
         name: Install GIT LFS and clone Data repo
         command: |
             apt-get update
