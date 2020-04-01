@@ -31,7 +31,9 @@ test: &test
     - run:
         name: Clone Data repo
         command: |
-          git lfs clone https://github.com/AlertaDengue/Data.git ./docker/dev_dumps
+          ssh-keygen -R github.com
+          ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+          git lfs clone https://github.com/AlertaDengue/Data.git ./docker/dev_dumps/
     - run:
         name: Rename data file and merge patch
         command: |
