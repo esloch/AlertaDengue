@@ -31,6 +31,10 @@ test: &test
     - run:
         name: Clone Data repo
         command: |
+          ssh -T git@github.com
+    - run:
+        name: Clone Data repo
+        command: |
           ssh-keygen -R github.com
           ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
           git lfs clone https://github.com/AlertaDengue/Data.git ./docker/dev_dumps/
