@@ -26,7 +26,7 @@ test: &test
           curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
           apt-get install git-lfs -y
           git lfs install
-          git clone https://github.com/esloch/Data.git ./docker/dev_dumps
+          git-lfs clone https://github.com/esloch/Data.git ./docker/dev_dumps
           
     - run:
         name: Rename data file and merge patch
