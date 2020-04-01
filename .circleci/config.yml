@@ -31,7 +31,7 @@ test: &test
     - run:
         name: Clone Data repo
         command: |
-          git clone https://github.com/AlertaDengue/Data.git ./docker/dev_dumps          
+          git lfs clone https://github.com/AlertaDengue/Data.git ./docker/dev_dumps
     - run:
         name: Rename data file and merge patch
         command: |
