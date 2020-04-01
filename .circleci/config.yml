@@ -13,10 +13,6 @@ test: &test
     - checkout
     - setup_remote_docker
     - run:
-        name: Set interective no-cli docker
-        command: |
-          export COMPOSE_INTERACTIVE_NO_CLI=1
-    - run:
         name: Install GIT LFS and clone Data repo
         command: |
           apt-get update
@@ -49,6 +45,10 @@ test: &test
     - run:
         name: Copy env_file as env_staging
         command: cp example_env_file .env_staging
+    - run:
+        name: Set interective no-cli docker
+        command: |
+          export COMPOSE_INTERACTIVE_NO_CLI=1
     - run:
         name: make deploy_staging
         command: make deploy_staging
