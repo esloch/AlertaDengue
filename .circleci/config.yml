@@ -31,11 +31,7 @@ test: &test
     - run:
         name: Install GIT LFS and clone Data repo
         command: |
-            apt-get update
-            apt-get install -y git-lfs
-            curl -L https://api.github.com/repos/git-lfs/git-lfs/tarball/core-gpg-keys | tar -Ozxf -
-            git lfs install
-            git-lfs clone https://github.com/esloch/Data.git ./docker/dev2_dumps/
+            git clone https://github.com/esloch/Data.git ./docker/dev2_dumps/
     - run:
         name: Rename data file and merge patch
         command: |
