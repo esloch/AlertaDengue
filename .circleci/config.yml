@@ -21,9 +21,13 @@ test: &test
         name: Install GIT LFS and clone Data repo
         command: |
           apt-get update
+          apt-get install sudo
+          apt-get install curl -y
+          curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
           apt-get install -y git-lfs
           git lfs install
-          git clone https://github.com/AlertaDengue/Data.git ./docker/dev_dumps
+          git clone https://github.com/esloch/Data.git ./docker/dev_dumps
+          
     - run:
         name: Rename data file and merge patch
         command: |
