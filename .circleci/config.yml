@@ -18,36 +18,20 @@ test: &test
           apt-get update
           apt-get install gnupg-agent --yes 
           apt install docker.io --yes
-    # - run:
-    #     name: Update Conda
-    #     command: |
-
-          # conda config --set always_yes True
-          # conda config --add channels conda-forge
-          # conda install -n base conda
-          # conda update --all
-          # conda install docker-compose make git git-lfs
-          # # conda env create -f environment-${PYTHON_VERSION}.yml
-          # # conda install python=${PYTHON_VERSION} -n alertadengue --file requirements-dev.txt
-    # - run:
-    #     name: Then compile and install GIT
-    #     command: |
-    #       apt-get update
-    #       apt-get install wget
-    #       apt-get install dh-autoreconf libcurl4-gnutls-dev libexpat1-dev gettext libz-dev libssl-dev -y
-    #       apt-get install asciidoc xmlto docbook2x -y
-    #       apt-get install install-info -y
-    #       wget https://github.com/git/git/archive/v2.26.0.tar.gz -O docker/git.tar.gz
-    #       tar -zxf docker/git.tar.gz -C docker/
-    #       make configure -C docker/git-2.26.0/
-    #       ./docker/git-2.26.0/configure --prefix=/usr
-    #       make all doc info -C docker/git-2.26.0/
-    #       make install install-doc install-html install-info -C docker/git-2.26.0/
-    #       git --version
-
+    - run:
+        name: Update Conda
+        command: |
+          conda config --set always_yes True
+          conda config --add channels conda-forge
+          conda install -n base conda
+          conda update --all
+          # conda env create -f environment-${PYTHON_VERSION}.yml
+          # conda install python=${PYTHON_VERSION} -n alertadengue --file requirements-dev.txt
     - run:
         name: LFS --version
         command: |
+          apt-get update
+          apt-get install git
           mkdir docker/git
           wget https://github.com/git-lfs/git-lfs/releases/download/v2.10.0/git-lfs-linux-amd64-v2.10.0.tar.gz -O docker/git/git_lfs.tar.gz
           tar -zxf docker/git/git_lfs.tar.gz -C docker/git/
