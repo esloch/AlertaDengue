@@ -40,6 +40,7 @@ test: &test
     - run:
         name: listra 00
         command: |
+          cd Data
           pwd
           ls -la
     - run:
