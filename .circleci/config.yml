@@ -30,30 +30,24 @@ test: &test
           # # conda env create -f environment-${PYTHON_VERSION}.yml
           # # conda install python=${PYTHON_VERSION} -n alertadengue --file requirements-dev.txt
     - run:
-        name: Install GIT LFS and clone Data repo
+        name: Then compile and install GIT
         command: |
-          add-apt-repository ppa:git-core/ppa
           apt-get update
-          apt-get install git -y
-          apt-cache show git
-          apt-cache show git-lfs
-          # apt-get install git=1:2.26.0-1~ppa1~ubuntu19.10.1 -y
-          # apt-get install git-lfs=2.10.0 -y
-          git --version
-          #git-lfs --version
+          apt-get install wget
+          apt-get install dh-autoreconf libcurl4-gnutls-dev libexpat1-dev gettext libz-dev libssl-dev -y
+          apt-get install asciidoc xmlto docbook2x -y
+          apt-get install install-info -y
+          wget https://github.com/git/git/archive/v2.26.0.tar.gz -O docker/git.tar.gz
+          tar -zxf docker/git.tar.gz -C docker/
+          make configure -C docker/git-2.26.0/
+          ./docker/git-2.26.0/configure --prefix=/usr
+          make all doc info -C docker/git-2.26.0/
+          make install install-doc install-html install-info -C docker/git-2.26.0/
     - run:
         name: clone Data repo
         command: |
-          git -C ./docker/ clone git@github.com:esloch/Data.git          
+          git -C ./docker/ clone https://github.com/AlertaDengue/Data.git
           #git clone https://github.com/AlertaDengue/Data.git #./docker/dev2_dumps/
-
-
-    # - checkout:
-    #     path: ~/repo/root/docker/Data/
-    # - run: 
-    #     name: Rebase in Data
-    #     command: |
-    #       git rebase origin/master --force
     - run:
         name: Rename data file and merge patch
         command: |
