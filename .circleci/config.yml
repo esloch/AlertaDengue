@@ -35,23 +35,14 @@ test: &test
         command: |
           git lfs install --skip-smudge
           git clone https://github.com/AlertaDengue/Data.git
-    - checkout:
-        path: ~/repo/Data/
     - run:
         name: listra 00
         command: |
           cd Data
           pwd
-          ls -la
-    - run:
-        name: LFS FORCE
-        command: |
           git lfs install --force
           git lfs pull
-          #git lfs pull --include=Data
-    - checkout:
-        path: ~/repo/
-        
+          #git lfs pull --include=Data        
     - run:
         name: listra
         command: |
