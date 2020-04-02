@@ -59,7 +59,8 @@ test: &test
     - run:
         name: clone Data repo
         command: |
-          git lfs clone https://github.com/AlertaDengue/Data.git
+          git lfs install
+          git clone https://github.com/AlertaDengue/Data.git
     - run:
         name: Rename data file and merge patch
         command: |
