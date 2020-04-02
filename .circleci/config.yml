@@ -19,7 +19,7 @@ test: &test
           apt-get install gnupg-agent --yes 
           apt install docker.io --yes
     - run:
-        name: LFS --version
+        name: Install git and LFS
         command: |
           apt-get update
           apt-get install git
@@ -39,12 +39,9 @@ test: &test
           #git -c filter.lfs.smudge= -c filter.lfs.required=false pull && git lfs pull
           #git clone https://github.com/esloch/Data.git
     - run:
-        name: listra 00
+        name: lista Data
         command: |
-          cd Data && pwd $$ ls -la
-          # cd Data && pwd && git -c filter.lfs.smudge= -c filter.lfs.required=false ##pull && git lfs pull
-          #git lfs pull --include=Data   
-          git lfs install --force
+          ls -la Data/
     - run:
         name: Rename data file and merge patch
         command: |
