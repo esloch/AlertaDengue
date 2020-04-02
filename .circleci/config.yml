@@ -19,15 +19,6 @@ test: &test
           apt-get install gnupg-agent --yes 
           apt install docker.io --yes
     - run:
-        name: Update Conda
-        command: |
-          conda config --set always_yes True
-          conda config --add channels conda-forge
-          conda install -n base conda
-          conda update --all
-          # conda env create -f environment-${PYTHON_VERSION}.yml
-          # conda install python=${PYTHON_VERSION} -n alertadengue --file requirements-dev.txt
-    - run:
         name: LFS --version
         command: |
           apt-get update
@@ -39,14 +30,13 @@ test: &test
           ./docker/git/install.sh
           git --version
           git-lfs --version
-
     - run:
         name: clone Data repo
         command: |
           git lfs install --skip-smudge
           git clone https://github.com/AlertaDengue/Data.git
     - checkout:
-        path: ~/repo/root/Data/
+        path: ~/repo/Data/
     - run:
         name: LFS FORCE
         command: |
@@ -66,6 +56,16 @@ test: &test
     - run:
         name: Copy env_file as env_staging
         command: cp example_env_file .env_staging
+    - run:
+        name: Update Conda
+        command: |
+          conda config --set always_yes True
+          conda config --add channels conda-forge
+          conda install -n base conda
+          conda update --all
+          conda install docker-compose make
+          # conda env create -f environment-${PYTHON_VERSION}.yml
+          # conda install python=${PYTHON_VERSION} -n alertadengue --file requirements-dev.txt
     - run:
         name: make deploy_staging
         command: make deploy_staging
