@@ -35,11 +35,11 @@ test: &test
             apt-get install -y git-lfs
             # git lfs install
             #git -C ./docker/ clone git@github.com:esloch/Data.git
-            git-lfs-clone https://github.com/esloch/Data.git ./docker/Data
+            git lfs clone https://github.com/esloch/Data.git
     - run:
         name: Rename data file and merge patch
         command: |
-          mv docker/Data/ docker/dev_dumps/
+          mv ./Data/ docker/dev_dumps/
           mv docker/dev_dumps/alertademo_data.sql docker/dev_dumps/latest_dengue.sql
           cat ./docker/dev_dumps/patch/notificacao.sql >> docker/dev_dumps/latest_dengue.sql
     - run:
