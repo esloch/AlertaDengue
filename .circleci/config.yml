@@ -18,23 +18,30 @@ test: &test
           apt-get update
           apt-get install gnupg-agent --yes 
           apt install docker.io --yes
-    - run:
-        name: Update Conda
-        command: |
-          conda config --set always_yes True
-          conda config --add channels conda-forge
-          conda install -n base conda
-          conda update --all
-          conda install docker-compose make git git-lfs
-          # conda env create -f environment-${PYTHON_VERSION}.yml
-          # conda install python=${PYTHON_VERSION} -n alertadengue --file requirements-dev.txt
+    # - run:
+    #     name: Update Conda
+    #     command: |
+
+          # conda config --set always_yes True
+          # conda config --add channels conda-forge
+          # conda install -n base conda
+          # conda update --all
+          # conda install docker-compose make git git-lfs
+          # # conda env create -f environment-${PYTHON_VERSION}.yml
+          # # conda install python=${PYTHON_VERSION} -n alertadengue --file requirements-dev.txt
     - run:
         name: Install GIT LFS and clone Data repo
         command: |
-            git -C ./docker/ clone git@github.com:esloch/Data.git
-            cd .docker/Data/
-            git rebase origin/master --force
+            git -C ./docker/ clone git@github.com:esloch/Data.git          
             #git clone https://github.com/esloch/Data.git ./docker/dev2_dumps/
+
+
+    - checkout:
+        path: .docker/Data/
+    - run:
+        name: Rebase in Data
+        command: |
+          git rebase origin/master --force
     - run:
         name: Rename data file and merge patch
         command: |
