@@ -38,9 +38,10 @@ test: &test
     - run:
         name: listra 00
         command: |
-          git lfs install --force
+          
           cd Data && pwd && git lfs pull
-          #git lfs pull --include=Data        
+          #git lfs pull --include=Data   
+          git lfs install --force     
     - run:
         name: listra
         command: |
