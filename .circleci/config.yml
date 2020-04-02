@@ -39,7 +39,9 @@ test: &test
         path: ~/repo/Data/
     - run:
         name: listra 00
-        command: ls -la
+        command: |
+          pwd
+          ls -la
     - run:
         name: LFS FORCE
         command: |
@@ -51,7 +53,9 @@ test: &test
         
     - run:
         name: listra
-        command: ls -la
+        command: |
+          pwd
+          ls -la
     - run:
         name: Rename data file and merge patch
         command: |
