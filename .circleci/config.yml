@@ -33,9 +33,7 @@ test: &test
     - run:
         name: clone Data repo
         command: |
-          #git lfs install --skip-smudge
-          git config --global alias.plfs "\!git -c filter.lfs.smudge= -c filter.lfs.required=false pull && git lfs pull"
-          git plfs
+          git lfs install --skip-smudge
           #git -c filter.lfs.smudge= -c filter.lfs.required=false pull && git lfs pull
           git clone https://github.com/AlertaDengue/Data.git
     - run:
@@ -43,7 +41,7 @@ test: &test
         command: |
           
           
-          # cd Data && pwd && git lfs pull
+          cd Data && pwd && git -c filter.lfs.smudge= -c filter.lfs.required=false pull && git lfs pull
           #git lfs pull --include=Data   
           git lfs install --force     
     - run:
