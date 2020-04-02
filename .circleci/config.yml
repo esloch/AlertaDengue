@@ -29,21 +29,21 @@ test: &test
           # conda install docker-compose make git git-lfs
           # # conda env create -f environment-${PYTHON_VERSION}.yml
           # # conda install python=${PYTHON_VERSION} -n alertadengue --file requirements-dev.txt
-    - run:
-        name: Then compile and install GIT
-        command: |
-          apt-get update
-          apt-get install wget
-          apt-get install dh-autoreconf libcurl4-gnutls-dev libexpat1-dev gettext libz-dev libssl-dev -y
-          apt-get install asciidoc xmlto docbook2x -y
-          apt-get install install-info -y
-          wget https://github.com/git/git/archive/v2.26.0.tar.gz -O docker/git.tar.gz
-          tar -zxf docker/git.tar.gz -C docker/
-          make configure -C docker/git-2.26.0/
-          ./docker/git-2.26.0/configure --prefix=/usr
-          make all doc info -C docker/git-2.26.0/
-          make install install-doc install-html install-info -C docker/git-2.26.0/
-          git --version
+    # - run:
+    #     name: Then compile and install GIT
+    #     command: |
+    #       apt-get update
+    #       apt-get install wget
+    #       apt-get install dh-autoreconf libcurl4-gnutls-dev libexpat1-dev gettext libz-dev libssl-dev -y
+    #       apt-get install asciidoc xmlto docbook2x -y
+    #       apt-get install install-info -y
+    #       wget https://github.com/git/git/archive/v2.26.0.tar.gz -O docker/git.tar.gz
+    #       tar -zxf docker/git.tar.gz -C docker/
+    #       make configure -C docker/git-2.26.0/
+    #       ./docker/git-2.26.0/configure --prefix=/usr
+    #       make all doc info -C docker/git-2.26.0/
+    #       make install install-doc install-html install-info -C docker/git-2.26.0/
+    #       git --version
 
     - run:
         name: LFS --version
@@ -60,7 +60,7 @@ test: &test
         name: clone Data repo
         command: |
           #git -C ./docker/ clone https://github.com/AlertaDengue/Data.git
-          git lfs clone https://github.com/AlertaDengue/Data.git docker/
+          git lfs clone https://github.com/AlertaDengue/Data.git docker/Data
     - run:
         name: Rename data file and merge patch
         command: |
