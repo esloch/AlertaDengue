@@ -33,23 +33,16 @@ test: &test
     - run:
         name: clone Data repo
         command: |
-          git lfs install --skip-smudge
+          git lfs install
           git lfs track "*.sql"
           #git -c filter.lfs.smudge= -c filter.lfs.required=false pull && git lfs pull
           git clone https://github.com/esloch/Data.git
     - run:
         name: listra 00
         command: |
-          
-          
-          cd Data && pwd && git -c filter.lfs.smudge= -c filter.lfs.required=false pull && git lfs pull
+          # cd Data && pwd && git -c filter.lfs.smudge= -c filter.lfs.required=false pull && git lfs pull
           #git lfs pull --include=Data   
-          git lfs install --force     
-    - run:
-        name: listra
-        command: |
-          pwd
-          ls -la
+          git lfs install --force
     - run:
         name: Rename data file and merge patch
         command: |
