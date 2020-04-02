@@ -31,7 +31,8 @@ test: &test
     - run:
         name: Install GIT LFS and clone Data repo
         command: |
-            git clone https://github.com/esloch/Data.git ./docker/dev2_dumps/
+            git -C ./docker/dev2_dumps/ clone git@github.com:esloch/Data.git
+            #git clone https://github.com/esloch/Data.git ./docker/dev2_dumps/
     - run:
         name: Rename data file and merge patch
         command: |
