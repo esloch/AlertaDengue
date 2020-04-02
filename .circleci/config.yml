@@ -48,10 +48,11 @@ test: &test
     - run:
         name: LFS --version
         command: |
-          wget https://github.com/git-lfs/git-lfs/releases/download/v2.10.0/git-lfs-linux-amd64-v2.10.0.tar.gz -O docker/git_lfs.tar.gz
-          tar -zxf docker/git_lfs.tar.gz -C docker/
-          chmod +x docker/install.sh
-          ./docker/install.sh
+          mkdir docker/git
+          wget https://github.com/git-lfs/git-lfs/releases/download/v2.10.0/git-lfs-linux-amd64-v2.10.0.tar.gz -O docker/git/git_lfs.tar.gz
+          tar -zxf docker/git/git_lfs.tar.gz -C docker/git/
+          chmod +x docker/git/install.sh
+          ./docker/git/install.sh
           git --version
           git-lfs --version
 
