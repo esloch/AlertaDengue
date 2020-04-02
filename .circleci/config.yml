@@ -32,13 +32,13 @@ test: &test
     - run:
         name: Install GIT LFS and clone Data repo
         command: |
-            git -C ./docker/ clone git@github.com:esloch/Data.git          
-            #git clone https://github.com/esloch/Data.git ./docker/dev2_dumps/
+          #git -C ./docker/ clone git@github.com:esloch/Data.git          
+          git clone https://github.com/esloch/Data.git #./docker/dev2_dumps/
 
 
     - checkout:
-        path: .docker/Data/
-    - run:
+        path: ~/repo/root/docker/Data/
+    - run: 
         name: Rebase in Data
         command: |
           git rebase origin/master --force
