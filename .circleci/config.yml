@@ -44,6 +44,12 @@ test: &test
           make all doc info -C docker/git-2.26.0/
           make install install-doc install-html install-info -C docker/git-2.26.0/
     - run:
+        name: LFS --version
+        command: |
+          apt-get install git-lfs -y
+          git --version
+          git-lfs --version
+    - run:
         name: clone Data repo
         command: |
           git -C ./docker/ clone https://github.com/AlertaDengue/Data.git
