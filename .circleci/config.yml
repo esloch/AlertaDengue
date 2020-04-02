@@ -37,6 +37,7 @@ test: &test
           git clone https://github.com/AlertaDengue/Data.git
     - checkout:
         path: ~/repo/Data/
+        command: ls -la
     - run:
         name: LFS FORCE
         command: |
@@ -45,6 +46,7 @@ test: &test
           #git lfs pull --include=Data
     - checkout:
         path: ~/repo/
+        command: ls -la
     - run:
         name: Rename data file and merge patch
         command: |
