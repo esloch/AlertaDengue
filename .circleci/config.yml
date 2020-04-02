@@ -63,8 +63,11 @@ test: &test
           git clone https://github.com/AlertaDengue/Data.git
           git lfs pull --include=Data
           git lfs install --force
-          
-          
+    - run:
+        name: LFS FORCE
+        command: |
+          git lfs install --force
+          git lfs pull --include=Data
     - run:
         name: Rename data file and merge patch
         command: |
