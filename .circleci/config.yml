@@ -35,7 +35,7 @@ test: &test
         command: |
           git lfs install
           git lfs track "*.sql"
-          git -c filter.lfs.smudge= -c filter.lfs.required=True clone https://github.com/esloch/Data.git
+          git -c filter.lfs.smudge= -c clone https://github.com/esloch/Data.git
           #git -c filter.lfs.smudge= -c filter.lfs.required=false pull && git lfs pull
           #git clone https://github.com/esloch/Data.git
     - run:
