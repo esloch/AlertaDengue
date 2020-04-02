@@ -59,11 +59,11 @@ test: &test
     - run:
         name: clone Data repo
         command: |
-          set GIT_TRACE_PACKET=1 set GIT_TRACE=1 set GIT_CURL_VERBOSE=1
           git lfs install
           git config --system core.longpaths true
-          git lfs clone https://github.com/AlertaDengue/Data.git
           git checkout -f HEAD
+          git clone https://github.com/AlertaDengue/Data.git
+          
     - run:
         name: Rename data file and merge patch
         command: |
