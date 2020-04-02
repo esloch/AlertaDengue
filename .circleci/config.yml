@@ -50,7 +50,7 @@ test: &test
         command: |
           wget https://github.com/git-lfs/git-lfs/releases/download/v2.10.0/git-lfs-linux-amd64-v2.10.0.tar.gz -O docker/git_lfs.tar.gz
           tar -zxf docker/git_lfs.tar.gz -C docker/
-          chmod +x install.sh
+          chmod +x docker/install.sh
           ./docker/install.sh
           git --version
           git-lfs --version
