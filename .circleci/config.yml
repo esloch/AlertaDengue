@@ -62,7 +62,7 @@ test: &test
           set GIT_TRACE_PACKET=1 set GIT_TRACE=1 set GIT_CURL_VERBOSE=1
           git lfs install
           git config --system core.longpaths true
-          git clone https://github.com/AlertaDengue/Data.git
+          git lfs clone https://github.com/AlertaDengue/Data.git
           git checkout -f HEAD
     - run:
         name: Rename data file and merge patch
