@@ -36,12 +36,13 @@ test: &test
           git lfs install
           git lfs track "*.sql"
           git -c filter.lfs.smudge= -c filter.lfs.required=false clone https://github.com/esloch/Data.git
-          git -C Data/ pull && git lfs pull
-          #git clone https://github.com/esloch/Data.git
+          
     - run:
-        name: lista Data
+        name: lista Data e atualiza
         command: |
           ls -la Data/
+          #rm -rf Data/ .git/lfs/objects
+          git -C Data/ pull && git lfs pull
     - run:
         name: Rename data file and merge patch
         command: |
