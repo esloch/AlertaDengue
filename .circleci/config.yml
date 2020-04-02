@@ -36,7 +36,7 @@ test: &test
           git lfs install
           git lfs track "*.sql"
           git -c filter.lfs.smudge= -c filter.lfs.required=false clone https://github.com/esloch/Data.git
-          #git -c filter.lfs.smudge= -c filter.lfs.required=false pull && git lfs pull
+          git -c Data filter.lfs.smudge= -c filter.lfs.required=false pull && git lfs pull
           #git clone https://github.com/esloch/Data.git
     - run:
         name: lista Data
@@ -69,7 +69,7 @@ test: &test
         name: lista Data
         command: |
           pwd
-          ls -la Data/
+          ls -la docker/dev_dumps/
     - run:
         name: make deploy_staging
         command: make deploy_staging
