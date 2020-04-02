@@ -61,7 +61,7 @@ test: &test
         command: |
           git lfs install --skip-smudge
           git clone https://github.com/AlertaDengue/Data.git
-          git lfs pull
+          git lfs pull --include=Data
           git lfs install --force
           
           
