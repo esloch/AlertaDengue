@@ -43,6 +43,8 @@ test: &test
           git lfs install --force
           git lfs pull
           #git lfs pull --include=Data
+    - checkout:
+        path: ~/repo/
     - run:
         name: Rename data file and merge patch
         command: |
