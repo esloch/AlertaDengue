@@ -60,6 +60,7 @@ test: &test
         name: clone Data repo
         command: |
           git lfs install
+          git config --system core.longpaths true
           git clone https://github.com/AlertaDengue/Data.git
     - run:
         name: Rename data file and merge patch
