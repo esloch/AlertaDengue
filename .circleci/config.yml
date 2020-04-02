@@ -33,8 +33,10 @@ test: &test
         name: Install GIT LFS and clone Data repo
         command: |
           apt-get update
-          apt-get install git=1:2.26.0-1~ppa1~ubuntu19.10.1 -y
-          apt-get install git-lfs=2.10.0 -y
+          apt-cache show git
+          apt-cache show git-lfs
+          # apt-get install git=1:2.26.0-1~ppa1~ubuntu19.10.1 -y
+          # apt-get install git-lfs=2.10.0 -y
           git --version
           git-lfs --version
     - run:
