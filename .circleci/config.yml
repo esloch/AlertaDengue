@@ -43,12 +43,18 @@ test: &test
           ./docker/git-2.26.0/configure --prefix=/usr
           make all doc info -C docker/git-2.26.0/
           make install install-doc install-html install-info -C docker/git-2.26.0/
+          git --version
+
     - run:
         name: LFS --version
         command: |
-          apt-get install git-lfs -y
+          wget https://github.com/git-lfs/git-lfs/releases/download/v2.10.0/git-lfs-linux-amd64-v2.10.0.tar.gz docker/git_lfs.tar.gz
+          tar -zxf docker/git_lfs.tar.gz -C docker/
+          chmod +x install.sh
+          ./docker/install.sh
           git --version
           git-lfs --version
+
     - run:
         name: clone Data repo
         command: |
