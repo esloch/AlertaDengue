@@ -29,12 +29,15 @@ test: &test
     #       # conda env create -f environment-${PYTHON_VERSION}.yml
     #       # conda install python=${PYTHON_VERSION} -n alertadengue --file requirements-dev.txt
     - run:
-        name: Install GIT LFS and clone Data repo
+        name: Install GIT LFS
         command: |
             apt-get update
             apt-get install -y git-lfs
             git lfs --version
             git --version
+    - run:
+        name: clone Data repo
+        command: |
             # git lfs install
             #git -C ./docker/ clone git@github.com:esloch/Data.git
             git lfs clone https://github.com/esloch/Data.git
