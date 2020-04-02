@@ -59,7 +59,7 @@ test: &test
     - run:
         name: clone Data repo
         command: |
-          git lfs install
+          git lfs install --skip-smudge
           git config --system core.longpaths true
           git clone https://github.com/AlertaDengue/Data.git
           git checkout -f HEAD
