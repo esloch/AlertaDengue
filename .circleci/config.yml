@@ -34,6 +34,7 @@ test: &test
         name: clone Data repo
         command: |
           git lfs install --skip-smudge
+          git lfs track "*.sql"
           #git -c filter.lfs.smudge= -c filter.lfs.required=false pull && git lfs pull
           git clone https://github.com/esloch/Data.git
     - run:
