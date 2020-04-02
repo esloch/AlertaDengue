@@ -33,6 +33,8 @@ test: &test
         command: |
             apt-get update
             apt-get install -y git-lfs
+            git lfs --version
+            git --version
             # git lfs install
             #git -C ./docker/ clone git@github.com:esloch/Data.git
             git lfs clone https://github.com/esloch/Data.git
