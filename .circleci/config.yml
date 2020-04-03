@@ -20,12 +20,11 @@ test: &test
         command: |
           apt-get update
           apt-get install git
-          wget https://github.com/git-lfs/git-lfs/releases/download/v2.10.0/git-lfs-linux-amd64-v2.10.0.tar.gz -O .git/git-lfs.tar.gz
-          tar -zxf .git/git-lfs.tar.gz -C .git/
-          chmod +x .git/install.sh
-          ./git/install.sh
-          git --version
-          git-lfs --version
+          mkdir docker/.git-lfs
+          wget https://github.com/git-lfs/git-lfs/releases/download/v2.10.0/git-lfs-linux-amd64-v2.10.0.tar.gz -O docker/.git-lfs/git_lfs.tar.gz
+          tar -zxf docker/.git-lfs/git_lfs.tar.gz -C docker/.git-lfs/
+          chmod +x docker/.git-lfs/install.sh
+          ./docker/.git-lfs/install.sh
     # Provide CircleCI with a GitHub user key on your project’s Project Settings > Checkout SSH keys page
     - add_ssh_keys:
         fingerprints:
