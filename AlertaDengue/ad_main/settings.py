@@ -120,22 +120,32 @@ PSQL_PORT = os.getenv('PSQL_PORT')
 DATABASE_ROUTERS = ['manager.router.DatabaseAppsRouter']
 DATABASE_APPS_MAPPING = {
     'dados': 'dados',
+    'default': 'default',
+    'dbf': 'infodengue',
     'forecast': 'forecast',
-    'dbf': 'default',
+
 }
 
 DATABASES = {
-    'default': {
+    'dados': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': PSQL_DBF,
+        'NAME': PSQL_DB,
         'USER': PSQL_USER,
         'PASSWORD': PSQL_PASSWORD,
         'HOST': PSQL_HOST,
         'PORT': PSQL_PORT,
     },
-    'dados': {
+    'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': PSQL_DB,
+        'USER': PSQL_USER,
+        'PASSWORD': PSQL_PASSWORD,
+        'HOST': PSQL_HOST,
+        'PORT': PSQL_PORT,
+    },
+    'infodengue': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': PSQL_DBF,
         'USER': PSQL_USER,
         'PASSWORD': PSQL_PASSWORD,
         'HOST': PSQL_HOST,

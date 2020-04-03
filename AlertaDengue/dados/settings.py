@@ -1,5 +1,9 @@
 
-from AlertaDengue.ad_main import settings
+try:
+    # to be used externally (such as notebooks science)
+    from AlertaDengue.AlertaDengue import settings
+except Exception:
+    from django.conf import settings
 
 
 PSQL_DB = settings.PSQL_DB
