@@ -1,12 +1,9 @@
 version: 2
 
-
 base: &base
   working_directory: ~/repo
   docker:
     - image: continuumio/miniconda3:latest
-
-
 test: &test
   <<: *base
   steps:
@@ -19,18 +16,17 @@ test: &test
           apt-get install gnupg-agent --yes 
           apt install docker.io --yes
     - run:
-        name: Install git and LFS
+        name: Install Git and LFS
         command: |
           apt-get update
           apt-get install git
-          mkdir docker/git
-          wget https://github.com/git-lfs/git-lfs/releases/download/v2.10.0/git-lfs-linux-amd64-v2.10.0.tar.gz -O docker/git/git_lfs.tar.gz
-          tar -zxf docker/git/git_lfs.tar.gz -C docker/git/
-          chmod +x docker/git/install.sh
-          ./docker/git/install.sh
+          wget https://github.com/git-lfs/git-lfs/releases/download/v2.10.0/git-lfs-linux-amd64-v2.10.0.tar.gz -O .git/git-lfs.tar.gz
+          tar -zxf .git/git-lfs.tar.gz -C .git/git-lfs
+          chmod +x .git/git-lfs/install.sh
+          ./git/git-lfs/install.sh
           git --version
           git-lfs --version
-
+    # Provide CircleCI with a GitHub user key on your project’s Project Settings > Checkout SSH keys page
     - add_ssh_keys:
         fingerprints:
           - "16:55:9f:6c:e4:3c:f6:87:34:67:c8:92:74:6b:ca:a2"
@@ -38,24 +34,12 @@ test: &test
         name: Clone frontend repository
         command: >-
           GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa_fingerprint'
-          git clone git@github.com:esloch/Data.git
-
-    # - run:
-    #     name: clone Data repo
-    #     command: |
-    #       git clone https://github.com/esloch/Data.git
-          
-    - run:
-        name: lista Data e atualiza
-        command: |
-          ls -la Data/
-          #rm -rf Data/ .git/lfs/objects
-          git lfs install
-          git -C Data/ pull && git lfs pull
+          #git clone git@github.com:esloch/Data.git
+          git -C docker/ clone git@github.com:esloch/Data.git
     - run:
         name: Rename data file and merge patch
         command: |
-          mv Data/ docker/dev_dumps/
+          mv docker/Data/ docker/dev_dumps/
           mv docker/dev_dumps/alertademo_data.sql docker/dev_dumps/latest_dengue.sql
           cat ./docker/dev_dumps/patch/notificacao.sql >> docker/dev_dumps/latest_dengue.sql
     - run:
@@ -76,11 +60,6 @@ test: &test
           # conda env create -f environment-${PYTHON_VERSION}.yml
           # conda install python=${PYTHON_VERSION} -n alertadengue --file requirements-dev.txt
     - run:
-        name: lista Data
-        command: |
-          pwd
-          ls -la docker/dev_dumps/
-    - run:
         name: make deploy_staging
         command: make deploy_staging
     - run:
@@ -94,6 +73,7 @@ test: &test
           source activate alertadengue
           cd AlertaDengue
           flake8
+
 jobs:
   python37_test:
       <<: *test
