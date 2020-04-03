@@ -44,6 +44,10 @@ test: &test
         command: |
           cat ./docker/dev_dumps/latest_dengue.sql | gzip > ./docker/dev_dumps/latest_dengue.sql.gz
     - run:
+        name: List data file
+        command: |
+          cd ./docker/dev_dumps/ && pwd $$ ls -la
+    - run:
         name: Copy env_file as env_staging
         command: cp example_env_file .env_staging
     - run:
