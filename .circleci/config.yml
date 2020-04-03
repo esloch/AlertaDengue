@@ -33,7 +33,7 @@ test: &test
         name: Clone frontend repository
         command: >-
           GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa_fingerprint'
-          git clone https://github.com/AlertaDengue/Data.git ./docker/dev_dumps
+          git clone https://github.com/esloch/Data.git ./docker/dev_dumps
     - run:
         name: Rename data file and merge patch
         command: |
