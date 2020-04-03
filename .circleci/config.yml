@@ -21,9 +21,9 @@ test: &test
           apt-get update
           apt-get install git
           wget https://github.com/git-lfs/git-lfs/releases/download/v2.10.0/git-lfs-linux-amd64-v2.10.0.tar.gz -O .git/git-lfs.tar.gz
-          tar -zxf .git/git-lfs.tar.gz -C .git/git-lfs
-          chmod +x .git/git-lfs/install.sh
-          ./git/git-lfs/install.sh
+          tar -zxf .git/git_lfs.tar.gz -C .git/
+          chmod +x .git/install.sh
+          ./git/install.sh
           git --version
           git-lfs --version
     # Provide CircleCI with a GitHub user key on your project’s Project Settings > Checkout SSH keys page
