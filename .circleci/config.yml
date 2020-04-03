@@ -1,23 +1,39 @@
 version: 2
 
-
 base: &base
   working_directory: ~/repo
   docker:
     - image: continuumio/miniconda3:latest
-
-
 test: &test
   <<: *base
   steps:
     - checkout
+    - setup_remote_docker
     - run:
-        name: Install GIT LFS and clone Data repo
+        name: Install Docker dependencies
         command: |
           apt-get update
-          apt-get install -y git-lfs
-          git lfs install
-          git-lfs clone https://github.com/AlertaDengue/Data.git ./docker/dev_dumps
+          apt-get install gnupg-agent --yes 
+          apt install docker.io --yes
+    - run:
+        name: Install Git and LFS
+        command: |
+          apt-get update
+          apt-get install git
+          mkdir docker/.git-lfs
+          wget https://github.com/git-lfs/git-lfs/releases/download/v2.10.0/git-lfs-linux-amd64-v2.10.0.tar.gz -O docker/.git-lfs/git_lfs.tar.gz
+          tar -zxf docker/.git-lfs/git_lfs.tar.gz -C docker/.git-lfs/
+          chmod +x docker/.git-lfs/install.sh
+          ./docker/.git-lfs/install.sh
+    # Provide CircleCI with a GitHub user key on your project’s Project Settings > Checkout SSH keys page
+    - add_ssh_keys:
+        fingerprints:
+          - "16:55:9f:6c:e4:3c:f6:87:34:67:c8:92:74:6b:ca:a2"
+    - run:
+        name: Clone frontend repository
+        command: >-
+          GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa_fingerprint'
+          git clone https://github.com/esloch/Data.git ./docker/dev_dumps
     - run:
         name: Rename data file and merge patch
         command: |
@@ -27,6 +43,13 @@ test: &test
         name: Prepare data file
         command: |
           cat ./docker/dev_dumps/latest_dengue.sql | gzip > ./docker/dev_dumps/latest_dengue.sql.gz
+    - run:
+        name: List data file
+        command: |
+          cd ./docker/dev_dumps/ && pwd $$ ls -la
+    - run:
+        name: Copy env_file as env_staging
+        command: cp example_env_file .env_staging
     - run:
         name: Update Conda
         command: |
