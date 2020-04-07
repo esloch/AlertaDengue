@@ -1,4 +1,15 @@
-from .settings import *  # noqa: F403
+from copy import deepcopy
+from .settings import *
 
 
-DATABASES['default']['TEST'] = DATABASES['default']['default']  # noqa: F405
+DATABASES['test_default'] = deepcopy(DATABASES['default'])  # noqa: F405
+DATABASES['test_default'] = {'TEST': {'MIRROR': 'default'}}
+
+DATABASES['test_dados'] = deepcopy(DATABASES['dados'])  # noqa: F405
+DATABASES['test_dados'] = {'TEST': {'MIRROR': 'dados'}}
+
+DATABASES['test_infodengue'] = deepcopy(DATABASES['infodengue'])  # noqa: F405
+DATABASES['test_infodengue'] = {'TEST': {'MIRROR': 'infodengue'}}
+
+DATABASES['test_forecast'] = deepcopy(DATABASES['forecast'])  # noqa: F405
+DATABASES['test_forecast'] = {'TEST': {'MIRROR': 'forecast'}}

@@ -1,7 +1,7 @@
 
 try:
     # to be used externally (such as notebooks science)
-    from AlertaDengue.AlertaDengue import settings
+    from AlertaDengue.ad_main import settings
 except Exception:
     from django.conf import settings
 

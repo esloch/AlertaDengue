@@ -4,6 +4,8 @@
 compose_cmd = docker-compose -p infodengue -f docker/docker-compose.yml --env-file .env
 staging_compose_cmd = docker-compose -f docker/staging-compose.yml --env-file .env_staging
 
+SERVICES :=
+
 
 build:
 	$(compose_cmd) build
@@ -30,6 +32,10 @@ build_staging:
 
 deploy_staging: build_staging
 	$(staging_compose_cmd) up -d
+
+# Exemplo: make start_staging SERVICES=staging_db
+start_staging:
+	$(staging_compose_cmd) up -d ${SERVICES}
 
 stop_staging:
 	$(staging_compose_cmd) stop
