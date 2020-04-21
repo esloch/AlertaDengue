@@ -31,4 +31,4 @@ def django_db_setup():
     db_name = settings.DATABASES['infodengue']['NAME']
     run_sql('DROP DATABASE IF EXISTS {}'.format(db_name))
     run_sql("CREATE DATABASE {} WITH OWNER dengueadmin ENCODING 'utf-8'".format(db_name))
-    os.system('DJANGO_SETTINGS_MODULE=AlertaDengue.ad_main.test_settings ENV_FILE=.env_staging python AlertaDengue/manage.py migrate --database=infodengue')
+    # os.system('DJANGO_SETTINGS_MODULE=AlertaDengue.ad_main.test_settings ENV_FILE=.env_staging python AlertaDengue/manage.py migrate --database=infodengue')
