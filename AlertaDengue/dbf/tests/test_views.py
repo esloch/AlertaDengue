@@ -3,17 +3,13 @@ from django.core.files.base import File
 from django.test import TestCase
 import pytest
 
-try:
-    from django.urls import reverse  # django 2
-except ModuleNotFoundError:
-    # django old version
-    from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from datetime import date
 
 # local
-from dbf.models import DBF, DBFChunkedUpload
-from dbf.forms import DBFForm
+from AlertaDengue.dbf.models import DBF, DBFChunkedUpload
+from AlertaDengue.dbf.forms import DBFForm
 
 import os
 

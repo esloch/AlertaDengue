@@ -10,7 +10,7 @@ from django.db import connections
 from django.conf import settings
 from AlertaDengue.ad_main import settings
 
-import pdb; pdb.set_trace()
+
 PSQL_URI = "postgresql://{}:{}@{}:{}/{}".format(
     settings.PSQL_USER,
     settings.PSQL_PASSWORD,
