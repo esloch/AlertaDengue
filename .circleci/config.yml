@@ -66,8 +66,8 @@ test: &test
           conda install -n base conda
           conda update --all
           conda install docker-compose make
-          # conda env create -f environment-${PYTHON_VERSION}.yml
-          conda install python=${PYTHON_VERSION} -n alertadengue --file requirements-dev.txt
+          conda env create -f environment-${PYTHON_VERSION}.yml
+          # conda install python=${PYTHON_VERSION} -n alertadengue --file requirements-dev.txt
     - run:
         name: make deploy_staging
         command: make deploy_staging
