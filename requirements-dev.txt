@@ -1,5 +1,5 @@
 jupyter
-jupyter_contrib_nbextensions
+# jupyter_contrib_nbextensions
 # eralchemy
 matplotlib
 PILLOW
