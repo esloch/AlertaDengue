@@ -1,4 +1,3 @@
-
 try:
     # to be used externally (such as notebooks science)
     from AlertaDengue.ad_main import settings

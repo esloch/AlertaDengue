@@ -1,5 +1,5 @@
 from django.conf import settings
-import os
+
 
 class DatabaseAppsRouter(object):
     """
@@ -13,6 +13,7 @@ class DatabaseAppsRouter(object):
 
     DATABASE_APPS_MAPPING = {'app1': 'db1', 'app2': 'db2'}
     """
+
     core_apps = {'contenttypes', 'auth'}
 
     def db_for_read(self, model, **hints):
@@ -58,8 +59,6 @@ class DatabaseAppsRouter(object):
             allow = apps_mapping.get(model._meta.app_label) == db
         elif model._meta.app_label in apps_mapping:
             allow = False
-        import os
-        os.system('echo "allow_syndb {}-{}" >> /tmp/log.txt'.format(label1, label2))
 
         # Allow core and 3rd-party relationships here
         set_1 = {model._meta.app_label}

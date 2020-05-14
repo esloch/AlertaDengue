@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth.models import User
 from django.core.files.base import File
 from django.test import TestCase
@@ -10,10 +12,6 @@ from datetime import date
 # local
 from AlertaDengue.dbf.models import DBF, DBFChunkedUpload
 from AlertaDengue.dbf.forms import DBFForm
-
-import os
-
-from AlertaDengue.ad_main import settings
 
 
 __all__ = ["DBFUploadViewTest"]

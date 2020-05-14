@@ -1,5 +1,5 @@
 from copy import deepcopy
-from .settings import *
+from AlertaDengue.ad_main.settings import DATABASES
 
 
 DATABASES['test_default'] = deepcopy(DATABASES['default'])  # noqa: F405
