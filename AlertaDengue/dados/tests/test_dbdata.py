@@ -1,5 +1,5 @@
 from unittest import TestCase
-from .. import dbdata
+from AlertaDengue.ad_main import dbdata
 import datetime
 import unittest
 
