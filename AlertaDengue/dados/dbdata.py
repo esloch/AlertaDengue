@@ -1585,12 +1585,7 @@ class ReportState:
                 )
 
                 dfs.append(
-                    pd.merge(
-                        df_,
-                        df_date_,
-                        how='outer',
-                        on='init_date_week',
-                    )
+                    pd.merge(df_, df_date_, how='outer', on='init_date_week',)
                 )
 
             df = pd.concat(dfs)

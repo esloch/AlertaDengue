@@ -435,7 +435,7 @@ class ReportStateCharts:
                 hoverinfo='text',
                 hovertemplate=_(
                     "Semana %{text} : %{y} %{yaxis.title.text} <extra></extra>"
-                )
+                ),
             ),
             secondary_y=False,
         )
@@ -450,7 +450,7 @@ class ReportStateCharts:
                 hoverinfo='text',
                 hovertemplate=_(
                     "Semana %{text} : %{y} %{yaxis.title.text} <extra></extra>"
-                )
+                ),
             ),
             secondary_y=True,
         )
