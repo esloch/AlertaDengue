@@ -1,0 +1,34 @@
+FROM debian:latest
+
+RUN apt-get -qq update --yes \
+&& apt-get install build-essential git make postgresql-client \
+   ca-certificates wget locales \
+   software-properties-common postgresql-11 postgresql-11-postgis-2.5 --yes \
+&& rm -rf /var/lib/apt/lists/* \
+&& apt-get clean
+
+#Set locale
+RUN sed -i -e "s/# pt_BR.*/pt_BR.UTF-8 UTF-8/" /etc/locale.gen \
+    && dpkg-reconfigure --frontend=noninteractive locales \
+    && update-locale LANG=pt_BR.UTF-8
+
+RUN mkdir -pv /docker/dev_dumps \
+&& mkdir docker/.git-lfs
+      
+RUN wget https://github.com/git-lfs/git-lfs/releases/download/v2.10.0/git-lfs-linux-amd64-v2.10.0.tar.gz -O docker/.git-lfs/git_lfs.tar.gz \
+&& tar -zxf docker/.git-lfs/git_lfs.tar.gz -C docker/.git-lfs/ \
+&& chmod +x docker/.git-lfs/install.sh \
+&& ./docker/.git-lfs/install.sh
+
+# Git clone and restoreDB
+RUN git lfs install \
+&& git lfs clone https://github.com/AlertaDengue/Data.git /docker/dev_dumps --depth 1 \
+&& chown -R postgres:postgres /docker/dev_dumps
+
+USER postgres
+WORKDIR /docker/dev_dumps/
+RUN /etc/init.d/postgresql start \
+&& cd /docker/dev_dumps \
+&& ./restore.sh
+
+CMD ["/usr/lib/postgresql/11/bin/postgres", "-D", "/var/lib/postgresql/11/main", "-c", "config_file=/etc/postgresql/11/main/postgresql.conf"]
