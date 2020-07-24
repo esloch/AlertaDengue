@@ -16,7 +16,7 @@ from ibis import config as cf
 from ibis.sql.postgres import existing_udf
 
 # local
-from .episem import episem, episem2date
+from dados.episem import episem, episem2date
 from ad_main import settings
 
 with cf.config_prefix('sql'):
