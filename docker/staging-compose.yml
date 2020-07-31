@@ -29,15 +29,6 @@ services:
       build:
         context: ".."
         dockerfile: "docker/Dockerfile-postgres-demo"
-      env_file:
-        - ../.env_staging
-      hostname: staging_db_demo
-      ports:
-        - "25432:25432"
-      volumes:
-        - ${STAGING_DATA_DIR}/demo :/var/lib/postgresql/data
-      restart: always
-      command: -p 25432
 
     staging_web:
       build:
