@@ -8,15 +8,15 @@ import numpy as np
 import os
 import random
 
+
 from django.apps import apps
-from django.utils.translation import gettext
+from django.utils.translation import gettext as _
 from django.shortcuts import redirect
 from django.views.generic.base import TemplateView, View
 from django.contrib import messages
 from django.conf import settings
 from django.http import HttpResponse
 from time import mktime
-
 
 # local
 from . import dbdata, models as M
@@ -28,11 +28,16 @@ from .dbdata import (
     ReportState,
     ALERT_COLOR,
     STATE_NAME,
+    STATE_INITIAL,
 )
 from .episem import episem, episem2date
 from .maps import get_city_info
 from .models import City, RegionalHealth
-from .charts import ReportCityCharts, ReportStateCharts
+
+from dados.charts.states import ReportStateCharts
+from dados.charts.home import HomeCharts
+from dados.charts.cities import ReportCityCharts, CityCharts
+
 from gis.geotiff import convert_from_shapefile
 
 DBF = apps.get_model('dbf', 'DBF')
@@ -63,7 +68,8 @@ def hex_to_rgb(value):
     value = value.lstrip('#')
     lv = len(value)
     return tuple(
-        int(value[i: i + lv // 3], 16) for i in range(0, lv, lv // 3)
+        int(value[i : i + lv // 3], 16)  # noqa: E203
+        for i in range(0, lv, lv // 3)
     )
 
 
@@ -262,21 +268,13 @@ class JoininPageView(TemplateView):
         return context
 
 
-class PartnersPageView(TemplateView):
-    template_name = 'partners.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(PartnersPageView, self).get_context_data(**kwargs)
-        return context
-
-
 class DataPublicServicesPageView(TemplateView):
     template_name = 'services.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        service = kwargs['service']
+        service = kwargs.get('service', None)
         service_type = (
             None if 'service_type' not in kwargs else kwargs['service_type']
         )
@@ -309,6 +307,11 @@ class DataPublicServicesPageView(TemplateView):
                 self.template_name = 'services_maps.html'
             else:
                 self.template_name = 'services_maps_doc.html'
+        elif service == 'tutorial':
+            if service_type is None:
+                self.template_name = 'services_tutorial.html'
+            else:
+                self.template_name = 'services_tutorial_R.html'
         elif service == 'api':
             if service_type is None:
                 self.template_name = 'services_api.html'
@@ -343,6 +346,8 @@ class DataPublicServicesPageView(TemplateView):
                 )
 
                 return context
+            elif service_type == 'tutorialR':
+                self.template_name = 'services_api_tutorialR.html'
             else:
                 self.template_name = 'services_api_doc.html'
         else:
@@ -384,9 +389,8 @@ class AlertaMainView(TemplateView):
         mundict = dict(dbdata.get_all_active_cities())
         # municipios, geocodigos = list(mundict.values()), list(mundict.keys())
         # results[d] = dbdata.load_serie_cities(geocodigos, d)
-
         for d in diseases:
-            case_series[d] = dbdata.get_series_by_UF(d)
+            case_series[d] = dbdata.get_series_by_UF(d, 52)
 
             for s in self._state_names:
                 df = case_series[d]  # alias
@@ -396,7 +400,7 @@ class AlertaMainView(TemplateView):
                 # cases estimation
                 cases_est = df_state.casos_est_s.values
 
-                case_series_state[d][s] = cases[:-52]
+                case_series_state[d][s] = cases[-52:]
 
                 if d == 'dengue':
                     if not df_state.empty:
@@ -409,8 +413,8 @@ class AlertaMainView(TemplateView):
                     'casos': cases[-1] if cases.size else 0,
                     'casos_est': cases_est[-1] if cases_est.size else 0,
                 }
-                estimated_cases_next_week[d][s] = gettext('Em breve')
-                v1 = 0 if not cases_est.size else cases_est[-2]
+                estimated_cases_next_week[d][s] = _('Em breve')
+                v1 = 0 if not cases_est.size > 1 else cases_est[-2]
                 v2 = 0 if not cases_est.size else cases_est[-1]
 
                 v1_week_fixed[d][s] = v1 == 0 and v2 != 0
@@ -462,6 +466,12 @@ class AlertaMainView(TemplateView):
                 'last_se': last_se,
                 'card_cols': card_cols,
                 'chart_cols': chart_cols,
+                # TODO: passar o df para o método que cria o chart
+                #       gerar o gráfico referente ao dado
+                #       atualmente apenas retorna um gráfico demo
+                'chart_dengue': HomeCharts.create_dengue_chart({}),
+                'chart_chik': HomeCharts.create_chik_chart({}),
+                'chart_zika': HomeCharts.create_zika_chart({}),
             }
         )
 
@@ -558,10 +568,30 @@ class AlertaMRJPageView(AlertCityPageBaseView):
             total_series = [0]
             total_observed_series = [0]
 
+        try:
+            city_chart = CityCharts.create_alert_chart(
+                geocode,
+                city_info['nome'],
+                disease_label,
+                disease_code,
+                epiweek,
+            )
+        except ValueError:
+            context = {
+                'message': _(
+                    "A doença {} não está registrada "
+                    "em nosso banco de dados para o município de {}."
+                ).format(disease_label, city_info['nome'])
+            }
+            self.template_name = 'error.html'
+            return context
+
         context.update(
             {
                 'geocodigo': geocode,  # legacy
                 'geocode': geocode,
+                'state_abv': 'RJ',
+                'state': city_info['uf'],
                 'nome': city_info['nome'],
                 'populacao': city_info['populacao'],
                 'incidencia': (
@@ -578,6 +608,8 @@ class AlertaMRJPageView(AlertCityPageBaseView):
                 # 'max_est': sum(current.casos_estmax.values),
                 'series_casos': case_series,
                 'SE': int(semana),
+                'WEEK': str(semana),
+                'yearweek': str(current.se.iat[0])[:],
                 'data1': segunda.strftime("%d de %B de %Y"),
                 'data2': (
                     segunda + datetime.timedelta(6)
@@ -596,6 +628,7 @@ class AlertaMRJPageView(AlertCityPageBaseView):
                 'forecast_date_max': forecast_date_max,
                 'epiweek': epiweek,
                 'geojson_url': '/static/rio_aps.geojson',
+                'chart_alert': city_chart,
             }
         )
         return context
@@ -663,11 +696,30 @@ class AlertaMunicipioPageView(AlertCityPageBaseView):
             total_series = [0]
             total_observed_series = [0]
 
+        try:
+            city_chart = CityCharts.create_alert_chart(
+                geocode,
+                city_info['nome'],
+                disease_label,
+                disease_code,
+                epiweek,
+            )
+        except ValueError:
+            context = {
+                'message': _(
+                    "A doença {} não está registrada "
+                    "em nosso banco de dados para o município de {}."
+                ).format(disease_label, city_info['nome'])
+            }
+            self.template_name = 'error.html'
+            return context
+
         context.update(
             {
                 'geocodigo': geocode,  # legacy
                 'geocode': geocode,
                 'state': city_info['uf'],
+                'state_abv': STATE_INITIAL[city_info['uf']],
                 'nome': city_info['nome'],
                 'populacao': city_info['populacao'],
                 'incidencia': (case_series[-1] / city_info['populacao'])
@@ -681,6 +733,7 @@ class AlertaMunicipioPageView(AlertCityPageBaseView):
                 'max_est': min_max_est[1],
                 'series_casos': {geocode: case_series[-12:]},
                 'SE': SE,
+                'WEEK': str(SE)[4:],
                 'data1': dia.strftime("%d de %B de %Y"),
                 # .strftime("%d de %B de %Y")
                 'data2': (dia + datetime.timedelta(6)),
@@ -698,6 +751,7 @@ class AlertaMunicipioPageView(AlertCityPageBaseView):
                 'forecast_date_max': forecast_date_max,
                 'epiweek': epiweek,
                 'geojson_url': '/static/geojson/%s.json' % geocode,
+                'chart_alert': city_chart,
             }
         )
         return context
@@ -793,8 +847,20 @@ class AlertaStateView(TemplateView):
         'MG': [-18.542, -44.319],
         'PR': [-25.006, -51.833],
         'RJ': [-22.187, -43.176],
+        'SP': [-23.5489, -46.6388],
+        'RS': [-51.217699, -30.034632],
+        'MA': [-2.53073, -44.3068],
     }
-    _map_zoom = {'CE': 6, 'ES': 6, 'MG': 6, 'PR': 6, 'RJ': 6}
+    _map_zoom = {
+        'CE': 6,
+        'ES': 6,
+        'MG': 6,
+        'PR': 6,
+        'RJ': 6,
+        'SP': 6,
+        'RS': 6,
+        'MA': 6,
+    }
 
     def get_context_data(self, **kwargs):
         """
@@ -843,7 +909,7 @@ class AlertaStateView(TemplateView):
         )
 
         if dbf is None:
-            last_update = gettext('desconhecida')
+            last_update = _('desconhecida')
         else:
             last_update = dbf.export_date
 
@@ -1309,8 +1375,20 @@ class ReportStateView(TemplateView):
         'MG': [-18.542, -44.319],
         'PR': [-25.006, -51.833],
         'RJ': [-22.187, -43.176],
+        'SP': [-23.5489, -46.6388],
+        'RS': [-51.217699, -30.034632],
+        'MA': [-2.53073, -44.3068],
     }
-    _map_zoom = {'CE': 6, 'ES': 6, 'MG': 6, 'PR': 6, 'RJ': 6}
+    _map_zoom = {
+        'CE': 6,
+        'ES': 6,
+        'MG': 6,
+        'PR': 6,
+        'RJ': 6,
+        'SP': 6,
+        'RS': 6,
+        'MA': 6,
+    }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

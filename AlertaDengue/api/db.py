@@ -1,19 +1,23 @@
 from sqlalchemy import create_engine
 
 # local
-from . import settings
+from ad_main import settings
 from dados.dbdata import (  # noqa:F401
-    CID10, STATE_NAME, get_disease_suffix, MRJ_GEOCODE
+    CID10,
+    STATE_NAME,
+    get_disease_suffix,
+    MRJ_GEOCODE,
 )
 
 import pandas as pd
 
 
 db_engine = create_engine(
-    "postgresql://{}:{}@{}/{}".format(
+    "postgresql://{}:{}@{}:{}/{}".format(
         settings.PSQL_USER,
         settings.PSQL_PASSWORD,
         settings.PSQL_HOST,
+        settings.PSQL_PORT,
         settings.PSQL_DB,
     )
 )
@@ -533,36 +537,6 @@ class NotificationQueries:
 
 
 class AlertCity:
-    @staticmethod
-    def search_rj(disease: str, ew_start: int, ew_end: int):
-        """
-
-        :param disease:
-        :param ew_start:
-        :param ew_end:
-        :return:
-        """
-        if disease not in CID10.keys():
-            raise Exception(
-                'The diseases available are: %s.'
-                % ', '.join('`%s`' % k for k in CID10.keys())
-            )
-
-        sql = '''
-        SELECT *
-        FROM "Municipio".alerta_mrj{0}, (
-          SELECT sum(casos)
-          FROM "Municipio".alerta_mrj{0}
-          WHERE se BETWEEN {3}01 AND {3}54
-        ) AS notif_accum_year
-        WHERE se BETWEEN {1} AND {2}
-        '''.format(
-            get_disease_suffix(disease), ew_start, ew_end, str(ew_end)[:4]
-        )
-
-        with db_engine.connect() as conn:
-            return pd.read_sql(sql, conn)
-
     @staticmethod
     def search(disease: str, geocode: int, ew_start: int, ew_end: int):
         """

@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 
 # local
 from .episem import episem, episem2date
-from . import settings
+from ad_main import settings
 
 import pandas as pd
 import numpy as np
@@ -26,19 +26,27 @@ STATE_NAME = {
     'MG': 'Minas Gerais',
     'PR': 'Paraná',
     'RJ': 'Rio de Janeiro',
+    'SP': 'São Paulo',
+    'RS': 'Rio Grande do Sul',
+    'MA': 'Maranhão',
 }
+
+ALL_STATE_NAMES = STATE_NAME.copy()
+# TODO: add missing states here
 
 ALERT_COLOR = {1: 'verde', 2: 'amarelo', 3: 'laranja', 4: 'vermelho'}
 
 ALERT_CODE = dict(zip(ALERT_COLOR.values(), ALERT_COLOR.keys()))
 
-STATE_INITIAL = dict(zip(STATE_NAME.keys(), STATE_NAME.values()))
+STATE_INITIAL = dict(zip(STATE_NAME.values(), STATE_NAME.keys()))
+ALL_STATE_INITIAL = dict(zip(ALL_STATE_NAMES.values(), ALL_STATE_NAMES.keys()))
 
 db_engine = create_engine(
-    "postgresql://{}:{}@{}/{}".format(
+    "postgresql://{}:{}@{}:{}/{}".format(
         settings.PSQL_USER,
         settings.PSQL_PASSWORD,
         settings.PSQL_HOST,
+        settings.PSQL_PORT,
         settings.PSQL_DB,
     )
 )
@@ -302,7 +310,7 @@ def get_city(query):
     return result.fetchall()
 
 
-def get_series_by_UF(disease='dengue'):
+def get_series_by_UF(disease='dengue', weeks=None):
     """
     Get the incidence series from the database aggregated (sum) by state
     :param UF: substring of the name of the state
@@ -311,16 +319,23 @@ def get_series_by_UF(disease='dengue'):
     """
     cache_id = 'get_series_by_UF-{}'.format(disease)
     series = cache.get(cache_id)
-
     _disease = get_disease_suffix(disease)
 
+    # TODO: this function is deprecated and will be
+    # removed when plotly-dash charts are ready
     if series is None:
         with db_engine.connect() as conn:
-            series = pd.read_sql(
-                'select * from uf_total{}_view;'.format(_disease),
-                conn,
-                parse_dates=True,
-            )
+            if weeks:
+                sql = f'''
+                SELECT * FROM uf_total{_disease}_view
+                WHERE data >= (
+                    SELECT MAX(data) AS max_date FROM uf_total{_disease}_view
+                ) - INTERVAL '{weeks+2} WEEKS'
+                '''
+            else:
+                sql = f'SELECT * FROM uf_total{_disease}_view;'
+
+            series = pd.read_sql(sql, conn, parse_dates=['data'],)
             cache.set(cache_id, series, settings.QUERY_CACHE_TIMEOUT)
 
     return series
@@ -614,8 +629,10 @@ def add_dv(geocodigo):
     """
     if len(str(geocodigo)) == 7:
         return geocodigo
-    else:
+    elif len(str(geocodigo)) == 6:
         return int(str(geocodigo) + str(calculate_digit(geocodigo)))
+    else:
+        raise ValueError('geocode does not match!')
 
 
 class NotificationResume:
@@ -1192,9 +1209,9 @@ class ReportCity:
         )
 
         df = pd.read_sql(sql, index_col='SE', con=db_engine)[k]
-        df.p_rt1 = (df.p_rt1 * 100).round(0).astype(int)
-        df.casos_est = df.casos_est.round(0).astype(int)
-        df.p_inc100k = df.p_inc100k.round(0).astype(int)
+        df.p_rt1 = (df.p_rt1 * 100).round(0).fillna(0)
+        df.casos_est = df.casos_est.round(0).fillna(0)
+        df.p_inc100k = df.p_inc100k.round(0).fillna(0)
 
         if df.empty:
             df['init_date_week'] = None
@@ -1445,11 +1462,11 @@ class ReportState:
 
         for d in cls.diseases:
             k = 'p_rt1_{}'.format(d)
-            df[k] = (df[k] * 100).fillna(0).round(0).astype(int)
+            df[k] = (df[k] * 100).fillna(0)
             k = 'casos_est_{}'.format(d)
-            df[k] = df[k].fillna(0).round(0).astype(int)
+            df[k] = df[k].fillna(0).round(0)
             k = 'p_inc100k_{}'.format(d)
-            df[k] = df[k].fillna(0).round(0).astype(int)
+            df[k] = df[k].fillna(0).round(0)
 
             df.rename(
                 columns={

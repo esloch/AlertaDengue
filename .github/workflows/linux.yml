@@ -1,0 +1,45 @@
+ 
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: CI
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+
+    env:
+      COMPOSE_FILE: docker/docker-compose.yml
+      PYTHON_VERSION: ${{ matrix.python-version }}
+
+    steps:
+    - uses: actions/checkout@v2
+  
+    - name: Download data files for Dataverse
+      run: |
+        mkdir -p docker/dev_dumps
+        wget https://dataverse.harvard.edu/api/access/datafile/4154429 -O docker/dev_dumps/latest_infodengue.sql.gz
+        wget https://dataverse.harvard.edu/api/access/datafile/4154518 -O docker/dev_dumps/latest_dengue.sql.gz
+
+    - name: Copy env_file as env_staging
+      run: |
+        cp example_env_file .env_staging
+
+    - name: make deploy_staging
+      run: make deploy_staging
+
+    - name: Run flake8
+      run: make flake8_staging SERVICES_STAGING=staging_web
+
+    - name: Run tests
+      run: make test_staging_web SERVICES_STAGING=staging_web
