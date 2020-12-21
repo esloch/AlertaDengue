@@ -35,11 +35,8 @@ class ReportStateCharts:
         df = deepcopy(df)
         ks_cases = ['casos notif. {}'.format(disease)]
 
-        # TODO: check this code
-
         df_tweet = df.reset_index()[['SE', 'tweets'] + ks_cases]
         df_tweet = df_tweet[df_tweet.SE >= year_week - 200]
-
         df_tweet.rename(columns={'tweets': 'menções'}, inplace=True)
 
         df_grp = (
