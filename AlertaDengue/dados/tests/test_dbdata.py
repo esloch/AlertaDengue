@@ -96,7 +96,33 @@ class TestMunicipio(TestCase):
 
 
 class TestReportState(TestCase):
-    def test_report_state(self):
+    def test_get_report_data(self):
+        '''
+        Check the dataframe index
+        Check if the geocode is in geocode_list
+        '''
+
+        geocodes_list = cities
+        df_ibis_get_data = dbdata.ReportState._get_report_data(
+            geocodes_list,
+            year_week_start,
+            year_week_end,
+            var_climate,
+            station_id,
+        )
+
+        idx_name = df_ibis_get_data.index.name
+        idx_SE = 'SE'
+        geocode = 3304557
+        geocode_item = list(df_ibis_get_data['geocode'].iloc[:])
+
+        self.assertEqual(idx_name, idx_SE)
+        self.assertIn(geocode, geocode_item)
+
+    def test_read_disease_data(self):
+        '''
+        Compare the structure of dataframes
+        '''
 
         df_sql_func = legacy.OldReportState._read_disease_data(
             cities, station_id, year_week, var_climate
@@ -107,6 +133,7 @@ class TestReportState(TestCase):
         df_ibis_func = dbdata.ReportState.read_disease_data(
             cities, station_id, year_week, var_climate
         )
+
         df_ibis_func.set_index("SE", inplace=True)
         df_ibis = df_ibis_func.iloc[:, 3:12].astype(float)
         df_ibis.info()
