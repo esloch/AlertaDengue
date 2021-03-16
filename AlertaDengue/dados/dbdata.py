@@ -21,34 +21,6 @@ from ad_main import settings
 with cf.config_prefix('sql'):
     cf.set_option('default_limit', None)
 
-# rio de janeiro city geocode
-MRJ_GEOCODE = 3304557
-
-CID10 = {'dengue': 'A90', 'chikungunya': 'A920', 'zika': 'A928'}
-DISEASES_SHORT = ['dengue', 'chik', 'zika']
-DISEASES_NAMES = CID10.keys()
-
-STATE_NAME = {
-    'CE': 'Ceará',
-    'ES': 'Espírito Santo',
-    'MG': 'Minas Gerais',
-    'PR': 'Paraná',
-    'RJ': 'Rio de Janeiro',
-    'SP': 'São Paulo',
-    'RS': 'Rio Grande do Sul',
-    'MA': 'Maranhão',
-    'SC': 'Santa Catarina',
-}
-
-ALL_STATE_NAMES = STATE_NAME.copy()
-# TODO: add missing states here
-
-ALERT_COLOR = {1: 'verde', 2: 'amarelo', 3: 'laranja', 4: 'vermelho'}
-
-ALERT_CODE = dict(zip(ALERT_COLOR.values(), ALERT_COLOR.keys()))
-
-STATE_INITIAL = dict(zip(STATE_NAME.values(), STATE_NAME.keys()))
-ALL_STATE_INITIAL = dict(zip(ALL_STATE_NAMES.values(), ALL_STATE_NAMES.keys()))
 
 PSQL_URI = "postgresql://{}:{}@{}:{}/{}".format(
     settings.PSQL_USER,
@@ -61,6 +33,41 @@ PSQL_URI = "postgresql://{}:{}@{}:{}/{}".format(
 db_engine = create_engine(PSQL_URI)
 con = ibis.postgres.connect(url=PSQL_URI)
 
+
+# rio de janeiro city geocode
+MRJ_GEOCODE = 3304557
+
+CID10 = {'dengue': 'A90', 'chikungunya': 'A920', 'zika': 'A928'}
+DISEASES_SHORT = ['dengue', 'chik', 'zika']
+DISEASES_NAMES = CID10.keys()
+
+
+def get_federated_state():
+    """
+    :import schema from foreign database infodengue:
+    :return: dict
+    """
+
+    sql = '''
+      SELECT abbreviation, name FROM local_common.common_federatedstate
+      WHERE status = 'True'
+      ORDER BY name
+    '''
+
+    with db_engine.connect() as conn:
+        return dict(conn.execute(sql).fetchall())
+
+
+STATE_NAME = get_federated_state()
+
+ALL_STATE_NAMES = STATE_NAME.copy()
+
+ALERT_COLOR = {1: 'verde', 2: 'amarelo', 3: 'laranja', 4: 'vermelho'}
+
+ALERT_CODE = dict(zip(ALERT_COLOR.values(), ALERT_COLOR.keys()))
+
+STATE_INITIAL = dict(zip(STATE_NAME.values(), STATE_NAME.keys()))
+ALL_STATE_INITIAL = dict(zip(ALL_STATE_NAMES.values(), ALL_STATE_NAMES.keys()))
 
 # Ibis utils functions
 
@@ -155,13 +162,13 @@ def get_var_climate_info(geocodes: list):
     :param geocodes:
     :return:
     """
-    sql = '''
-    SELECT DISTINCT codigo_estacao_wu, varcli
-    FROM "Dengue_global".regional_saude
-    WHERE municipio_geocodigo IN ({})
-    '''.format(
-        ','.join(map(lambda v: "'{}'".format(v), geocodes))
-    )
+    sql = f'''
+        SELECT DISTINCT codigo_estacao_wu, varcli
+        FROM "Dengue_global".regional_saude
+        WHERE municipio_geocodigo IN (
+            {','.join(map(lambda v: f"'{v}'", geocodes))
+            })
+        '''
     with db_engine.connect() as conn:
         return conn.execute(sql).fetchone()
 

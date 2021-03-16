@@ -72,6 +72,7 @@ INSTALLED_APPS = (
     'api',
     'manager.router',
     'maintenance_mode',
+    'common',
 )
 
 if DEBUG:
@@ -140,6 +141,7 @@ DATABASE_APPS_MAPPING = {
     'default': 'default',
     'dbf': 'infodengue',
     'forecast': 'forecast',
+    'common': 'infodengue',
 }
 
 DATABASES = {

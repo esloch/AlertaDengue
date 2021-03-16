@@ -1,7 +1,6 @@
 from django.http import HttpResponse
 from django.views.generic.base import View
 import datetime as dt
-from datetime import datetime
 import os
 
 # local
@@ -214,7 +213,7 @@ class EpiYearWeekView(View, _GetMethod):
                 'epidate', error_message='epidate sent is empty.'
             )
 
-            epidate = datetime.strptime(epidate_s, '%Y-%m-%d')
+            epidate = dt.datetime.strptime(epidate_s, '%Y-%m-%d')
             epi_year_week = episem(epidate, sep='')
 
             if output_format == 'json':
