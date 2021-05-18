@@ -141,7 +141,7 @@ DATABASE_APPS_MAPPING = {
     'default': 'default',
     'dbf': 'infodengue',
     'forecast': 'forecast',
-    'common': 'infodengue',
+    'common': 'dengue',
 }
 
 DATABASES = {

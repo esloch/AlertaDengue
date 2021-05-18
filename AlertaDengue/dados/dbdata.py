@@ -41,24 +41,9 @@ CID10 = {'dengue': 'A90', 'chikungunya': 'A920', 'zika': 'A928'}
 DISEASES_SHORT = ['dengue', 'chik', 'zika']
 DISEASES_NAMES = CID10.keys()
 
-
-def get_federated_state():
-    """
-    :import schema from foreign database infodengue:
-    :return: dict
-    """
-
-    sql = '''
-      SELECT abbreviation, name FROM local_common.common_federatedstate
-      WHERE status = 'True'
-      ORDER BY name
-    '''
-
-    with db_engine.connect() as conn:
-        return dict(conn.execute(sql).fetchall())
-
-
-STATE_NAME = get_federated_state()
+schema_dengue_global = con.schema('Dengue_global')
+t_states = schema_dengue_global.table('estado')['uf', 'nome']
+STATE_NAME = t_states.execute().set_index('uf').to_dict()['nome']
 
 ALL_STATE_NAMES = STATE_NAME.copy()
 
