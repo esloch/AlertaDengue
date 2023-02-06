@@ -78,12 +78,10 @@ jobs:
       run: envsubst < env.tpl > .env
 
     - name: Build database
-      id: db
       run: |
          makim build
 
     - name: Start database
-      id: db
       run: |
          makim start
 
