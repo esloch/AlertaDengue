@@ -77,6 +77,10 @@ jobs:
     - name: Create env file
       run: envsubst < env.tpl > .env
 
+    - name: List directory
+      run: |
+         ls -la 
+
     - name: Build database
       run: |
          makim build
@@ -84,6 +88,10 @@ jobs:
     - name: Start database
       run: |
          makim start
+
+    - name: Setup tmate session
+      if: "${{ failure() }}"
+      uses: mxschmitt/action-tmate@v3
 
     # - name: Build docker images
     #   run: |
