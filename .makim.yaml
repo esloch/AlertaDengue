@@ -1,11 +1,11 @@
 version: 1.0.0
+env-file: .env
 groups:
   - name: containers
-    env-file: .env
 
     vars:
-      sugar_run: containers-sugar run --group dev --services web
-      sugar_run_rm: containers-sugar run --group dev --services web --extras="--rm"
+      sugar_run: containers-sugar run --group $ENV --services web
+      sugar_run_rm: containers-sugar run --group $ENV --services web --extras=--rm
       manage_py: python AlertaDengue/manage.py
 
     targets:
@@ -24,8 +24,9 @@ groups:
       static-geofiles:
         help: Generate static geofiles
         run: |
-          {{ sugar_run_rm }} --cmd "{{ manage_py }} sync_geofiles"
-          {{ sugar_run_rm }} --cmd "{{ manage_py }} collectstatic --noinput"
+          # {{ sugar_run_rm }} --cmd "{{ manage_py }} sync_geofiles"
+          # {{ sugar_run_rm }} --cmd "{{ manage_py }} collectstatic --noinput"
+          {{ sugar_run_rm }} --cmd "which python"
 
       django-migrate:
         dependencies:
@@ -54,8 +55,6 @@ groups:
           timeout {{ args.timeout }} ./containers/scripts/healthcheck.sh {{ service }}
 
       container-wait-all:
-        env:
-          ENV: dev
         run: |
           if $ENV == "dev":
             makim container-wait --services "db"
