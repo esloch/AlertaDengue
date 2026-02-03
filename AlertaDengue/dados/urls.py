@@ -80,11 +80,6 @@ urlpatterns = [
         name="team",
     ),
     re_path(
-        r"^participe/$",
-        cache_page(60 * 60 * 60 * 24)(JoininPageView.as_view()),
-        name="joinin",
-    ),
-    re_path(
         r"^services/(?P<service>maps|api)?$",
         DataPublicServicesPageView.as_view(),
         name="data_public_services",

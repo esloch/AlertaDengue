@@ -186,14 +186,6 @@ class TeamPageView(TemplateView):
         return context
 
 
-class JoininPageView(TemplateView):
-    template_name = "joinin.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(JoininPageView, self).get_context_data(**kwargs)
-        return context
-
-
 class DataPublicServicesPageView(TemplateView):
     template_name = "services.html"
 

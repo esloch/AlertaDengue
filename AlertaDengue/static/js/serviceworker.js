@@ -6,7 +6,6 @@ const OFFLINE_URLS = [
   "/",
   "/informacoes/",
   "/equipe/",
-  "/participe/",
   "/report/",
   "/services/",
   "/services/api",
