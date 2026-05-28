@@ -63,6 +63,7 @@ from .dbdata import (  # get_notification_cases,
 from .episem import episem, episem2date
 from .maps import get_city_info
 from .models import City
+from .team import get_team_page_props
 
 # local
 
@@ -182,6 +183,7 @@ class TeamPageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(TeamPageView, self).get_context_data(**kwargs)
+        context["team_page_props"] = get_team_page_props()
         return context
 
 
