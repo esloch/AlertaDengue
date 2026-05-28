@@ -1,0 +1,11 @@
+{
+  "frontend/src/entries/team.tsx": {
+    "file": "team.js",
+    "name": "team",
+    "src": "frontend/src/entries/team.tsx",
+    "isEntry": true,
+    "css": [
+      "assets/team.css"
+    ]
+  }
+}

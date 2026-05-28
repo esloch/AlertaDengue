@@ -46,6 +46,7 @@ AlertaDengue/static/img/incidence_maps/*
 .env*
 
 .mypy_cache
+node_modules/
 
 maintenance_mode_state.txt
 
