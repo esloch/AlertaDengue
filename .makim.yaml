@@ -56,7 +56,11 @@ groups:
 
       # CONTAINER
       collectstatic:
-        help: Run the collectstatic for the backend service
+        help: Build frontend assets and run collectstatic for the backend service
+        hooks:
+          pre-run:
+            - task: reactjs.install
+            - task: reactjs.build
         run: |
           CMD="python manage.py collectstatic --no-input"
 
@@ -193,6 +197,15 @@ groups:
           mypy --follow-imports=skip --ignore-missing-imports \
             AlertaDengue/tests/dados/
 
+      reactjs:
+        help: Run frontend checks and production build
+        hooks:
+          pre-run:
+            - task: reactjs.install
+            - task: reactjs.build
+        run: |
+          echo "[II] React checks completed."
+
       unit:
         help: Run tests with pytest (inside web container)
         args:
@@ -230,6 +243,20 @@ groups:
           sugar --profile dev compose-ext run --rm --service web \
             --options "$TTY_OPT" \
             --cmd "sh -lc \"$CMD\""
+
+  # REACT FRONTEND
+  reactjs:
+    help: Manage the Vite/React frontend build.
+    tasks:
+      install:
+        help: Install frontend dependencies reproducibly.
+        run: npm ci
+
+      build:
+        help: Typecheck and build Vite frontend assets.
+        run: |
+          npm run typecheck
+          npm run build
 
   develop:
     help: Development tasks and utilities.
