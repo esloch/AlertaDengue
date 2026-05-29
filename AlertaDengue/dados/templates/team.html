@@ -1,17 +1,14 @@
 {% extends 'base.html' %}
-{% load static %}
 {% load i18n %}
 
 {% block title %}{% translate "Equipe" %}{% endblock %}
 
 {% block extra_head %}
-<link href="{% static 'frontend/assets/team.css' %}" rel="stylesheet">
-<script type="module" src="{% static 'frontend/team.js' %}"></script>
+{% include "components/react_assets.html" with react_entry="frontend/team.js" react_css="frontend/assets/team.css" only %}
 {% endblock %}
 
 {% block content %}
-<div id="team-react-root"></div>
-{{ team_page_props|json_script:"team-page-props" }}
+{% include "components/react_mount.html" with react_mount_id="team-react-root" react_props_id="team-page-props" react_props=team_page_props react_page="team" only %}
 <noscript>
   <p>{% translate "Ative o JavaScript para visualizar a equipe do Infodengue." %}</p>
 </noscript>

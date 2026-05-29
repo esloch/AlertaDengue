@@ -1,0 +1,6 @@
+{% load static %}
+
+{% if react_css %}
+<link href="{% static react_css %}" rel="stylesheet">
+{% endif %}
+<script type="module" src="{% static react_entry %}"></script>

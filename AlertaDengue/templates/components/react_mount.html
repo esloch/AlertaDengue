@@ -1,0 +1,5 @@
+<div
+  id="{{ react_mount_id }}"
+  {% if react_page %}data-page="{{ react_page }}"{% endif %}
+></div>
+{{ react_props|json_script:react_props_id }}
