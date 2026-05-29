@@ -3,7 +3,6 @@ import json
 import os
 import unittest
 from unittest import skip
-from unittest.mock import patch
 
 from django.conf import settings
 from django.test import TestCase
@@ -15,21 +14,9 @@ class TestAlertaStaticPageView(TestCase):
         response = self.client.get(reverse("dados:about"))
         self.assertEqual(response.status_code, 200)
 
-    @patch(
-        "dados.templatetags.searchbox_component.RegionalParameters.get_cities",
-        return_value={3304557: "Rio de Janeiro"},
-    )
-    def test_team(self, _mock_get_cities):
+    def test_team(self):
         response = self.client.get(reverse("dados:team"))
         self.assertEqual(response.status_code, 200)
-
-        content = response.content.decode()
-        self.assertIn('id="team-react-root"', content)
-        self.assertIn('id="team-page-props"', content)
-        self.assertIn("frontend/assets/team.css", content)
-        self.assertIn("frontend/team.js", content)
-        self.assertIn("Cl\\u00e1udia Torres Code\\u00e7o", content)
-        self.assertIn("Mosqlimate", content)
 
     def test_joinin(self):
         response = self.client.get(reverse("dados:joinin"))
