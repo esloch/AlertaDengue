@@ -131,6 +131,13 @@ views.
 | `img/incidence_maps/country/incidence_Nacional_chikungunya.png` | UF incidence section | Static country map. |
 | `img/incidence_maps/state/incidence_<UF>_<disease>.png` | State chart fragment | One image per UF/disease. |
 
+## Phase 2: Backend Contract
+
+The next migration step is to add a backend service/query layer and an internal
+JSON endpoint for the home state summary. That endpoint should use the unmanaged
+home models, return chart-ready data, and preserve the legacy `/chartshome/<UF>`
+HTML fragment until the Next.js route reaches parity.
+
 ## Migration Checklist
 
 1. Keep Django-rendered `/` and `/chartshome/<UF>` stable while adding JSON.

@@ -140,6 +140,9 @@ jobs:
       run: |
         makim develop.container-wait-all --timeout 150
 
+    - name: Migration check
+      run: makim django.makemigrations --check
+
     - name: Unit tests
       run: makim tests.unit
 

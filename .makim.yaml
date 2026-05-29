@@ -85,7 +85,7 @@ groups:
             --services postgres --options -d
 
           CWD=$(pwd)
-          CMD_FLAG="${{ '--check' if args.check else '' }} --no-input"
+          CMD_FLAG="${{ '--check --dry-run' if args.check else '' }} --no-input"
 
           for app in 'dados'; do
             echo -e "\nMaking migration files for: '${app}' ...\n"
