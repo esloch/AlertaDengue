@@ -10,7 +10,7 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        team: resolve(__dirname, "frontend/src/entries/team.tsx"),
+        app: resolve(__dirname, "frontend/src/entries/app.tsx"),
       },
       output: {
         entryFileNames: "[name].js",
