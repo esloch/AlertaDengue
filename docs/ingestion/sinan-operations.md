@@ -222,3 +222,20 @@ DONE: enqueued=1 failed=0
 Task ingestion.sinan_stage_run[...] succeeded
 Task ingestion.sinan_merge_run[...] succeeded
 ```
+
+# MinIO materialization ownership
+
+The pipeline coordinates only its explicitly configured object prefix. When
+the pipeline owns the guarded staging fixture prefix, configure this optional
+non-secret setting in the AlertaDengue staging environment:
+
+```dotenv
+MINIO_MATERIALIZER_EXCLUDE=approved-fixtures/*
+```
+
+The legacy `minio-materializer` then passes the value as one quoted
+`mc mirror --exclude` pattern. An unset or empty value adds no option and
+preserves the existing full-bucket mirror behavior. Do not set this globally
+for production. During the guarded E2E, ordinary SINAN objects remain under
+the legacy materializer and `approved-fixtures/*` is materialized only by
+infodengue-pipeline.
