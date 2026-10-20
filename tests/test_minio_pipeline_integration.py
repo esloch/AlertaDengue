@@ -72,3 +72,31 @@ def test_compose_keeps_exclusion_empty_by_default() -> None:
         '${MINIO_MATERIALIZER_EXCLUDE:-}'
     )
     assert service['volumes'][0] == '${DOCKER_HOST_INCOMING_DIR}:/incoming'
+
+
+def test_materializer_exclusion_env_template_renders_empty_or_configured() -> None:
+    """The tracked env template preserves unset and configured deployments."""
+    template = Path('.envs/.env.tpl').read_text()
+    assignment = 'MINIO_MATERIALIZER_EXCLUDE=${MINIO_MATERIALIZER_EXCLUDE}'
+    assert (
+        '# Optional in staging only: MINIO_MATERIALIZER_EXCLUDE=approved-fixtures/*'
+        in template
+    )
+    assert assignment in template
+
+    empty_env = {
+        key: value
+        for key, value in os.environ.items()
+        if key != 'MINIO_MATERIALIZER_EXCLUDE'
+    }
+    empty = subprocess.run(
+        ['/usr/bin/envsubst'], input=assignment + '\n', text=True,
+        capture_output=True, check=True, env=empty_env,
+    )
+    configured = subprocess.run(
+        ['/usr/bin/envsubst'], input=assignment + '\n', text=True,
+        capture_output=True, check=True,
+        env={**empty_env, 'MINIO_MATERIALIZER_EXCLUDE': 'approved-fixtures/*'},
+    )
+    assert empty.stdout == 'MINIO_MATERIALIZER_EXCLUDE=\n'
+    assert configured.stdout == 'MINIO_MATERIALIZER_EXCLUDE=approved-fixtures/*\n'
